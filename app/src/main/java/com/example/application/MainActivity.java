@@ -26,10 +26,25 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         buttonFlashLight.setOnClickListener(buttonClickListener_1);
+
+        Button buttonImageViewer = (Button) findViewById(R.id.button_2);
+        View.OnClickListener buttonClickListener_2 = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RunImageViewer(view);
+            }
+        };
+        buttonImageViewer.setOnClickListener(buttonClickListener_2);
+
     }
 
     public void RunFlashLight(View view) {
         Intent intentFlashLight = new Intent(MainActivity.this, FlashLightActivity.class);
         startActivity(intentFlashLight);
+    }
+
+    public void RunImageViewer(View view) {
+        Intent intentImageViewer = new Intent(MainActivity.this, ImageViewerActivity.class);
+        startActivity(intentImageViewer);
     }
 }

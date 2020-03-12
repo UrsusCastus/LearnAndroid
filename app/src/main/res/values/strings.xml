@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Application</string>
     <string name="buttonFlashLight">FlashLight</string>
-    <string name="button_image_viewer">Images</string>
+    <string name="button_image_viewer">Image viewer</string>
     <string name="flash">Flash</string>
     <string name="maximum_screen_brightness">Maximum screen brightness</string>
     <string name="flashlight">Flashlight</string>

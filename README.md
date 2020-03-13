@@ -1,3 +1,5 @@
+Hello, Android
+
 Борда (aka доска aka дашборд aka канбан)
 https://github.com/matreshkin/ArturLearnAndroid1/projects/1
 

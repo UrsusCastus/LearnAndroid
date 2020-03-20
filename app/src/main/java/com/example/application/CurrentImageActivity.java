@@ -21,13 +21,13 @@ public class CurrentImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getSupportActionBar().hide();
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_current_image);
 
         ImageView imageView = (ImageView) findViewById(R.id.current_image_view);
 
         String path = getIntent().getStringExtra("image_path");
-        Log.e("Path", path);
         imageView.setImageBitmap(loadBitmapFromAssets(this, path));
     }
 

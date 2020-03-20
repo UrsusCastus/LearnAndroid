@@ -4,13 +4,12 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:background="#90a4ae"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_large_viewer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:layout_weight="0.2" />
 
     <androidx.recyclerview.widget.RecyclerView

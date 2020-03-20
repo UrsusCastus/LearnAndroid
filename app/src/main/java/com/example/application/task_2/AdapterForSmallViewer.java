@@ -20,8 +20,8 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
     private ArrayList<Integer> mArrayListHorizontalItems;
 
     public AdapterForSmallViewer(Context context, ArrayList<Integer> arrayListItemsHorizontal) {
-        this.mContext = context;
-        this.mArrayListHorizontalItems = arrayListItemsHorizontal;
+        mContext = context;
+        mArrayListHorizontalItems = arrayListItemsHorizontal;
     }
 
     @NonNull
@@ -39,7 +39,7 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
             @Override
             public void onClick(View v) {
                 AdapterForLargeViewer adapterForLargeViewer = ImageViewerActivity.getAdapterForLargeViewer();
-                adapterForLargeViewer.mLinearLayoutManagerLargeViewer.scrollToPosition(position);
+                adapterForLargeViewer.mGridLayoutManagerLargeViewer.scrollToPosition(position);
             }
         });
     }

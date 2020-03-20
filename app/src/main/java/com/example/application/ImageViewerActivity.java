@@ -1,26 +1,38 @@
 package com.example.application;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.application.task_2.AdapterForSmallViewer;
 import com.example.application.task_2.AdapterForLargeViewer;
 
 import java.util.ArrayList;
 
+import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_ONE;
+import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_THREE;
+
 public class ImageViewerActivity extends AppCompatActivity {
+    private final String COUNT_COLUMNS = "saveCountColumns";
 
     ArrayList<Integer> mItemsSmallViewer = new ArrayList<Integer>(38);
     ArrayList<String> mItemsLargeViewer = new ArrayList<String>(38);
 
-    LinearLayoutManager mLinearLayoutManager;
-
+    private GridLayoutManager mGridLayoutManager;
     private static AdapterForLargeViewer sAdapterForLargeViewer;
+
+    private RecyclerView recyclerLargeViewer;
+
+    private int mColumnCount = 1;
 
     //модификатор static для видимости в AdapterForHorizontalViewer
     public static AdapterForLargeViewer getAdapterForLargeViewer() {
@@ -30,15 +42,33 @@ public class ImageViewerActivity extends AppCompatActivity {
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         setInitialArrayListSmallViewer();
         initialRecyclerSmallViewer();
 
         setInitialArrayListLargeViewer();
+
+        if (savedInstanceState != null) {
+            mColumnCount = savedInstanceState.getInt(COUNT_COLUMNS);
+        }
+
         initialRecyclerLargeViewer();
+    }
+
+    private void initialRecyclerLargeViewer() {
+        if (getScreenOrientation().equals("PortraitOrientation")) {
+            mGridLayoutManager = new GridLayoutManager(this, mColumnCount, GridLayoutManager.VERTICAL, false);
+        } else {
+            mGridLayoutManager = new GridLayoutManager(this, mColumnCount, GridLayoutManager.HORIZONTAL, false);
+        }
+        sAdapterForLargeViewer = new AdapterForLargeViewer(this, mItemsLargeViewer, mGridLayoutManager);
+        recyclerLargeViewer = (RecyclerView) findViewById(R.id.rv_large_viewer);
+        recyclerLargeViewer.setAdapter(sAdapterForLargeViewer);
+        recyclerLargeViewer.setLayoutManager(mGridLayoutManager);
     }
 
     private void initialRecyclerSmallViewer() {
@@ -48,22 +78,41 @@ public class ImageViewerActivity extends AppCompatActivity {
         } else {
             recyclerSmallViewer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         }
-
         AdapterForSmallViewer adapterForSmallViewer = new AdapterForSmallViewer(this, mItemsSmallViewer);
         recyclerSmallViewer.setAdapter(adapterForSmallViewer);
     }
 
-    private void initialRecyclerLargeViewer() {
-        RecyclerView recyclerLargeViewer = (RecyclerView) findViewById(R.id.rv_large_viewer);
-        if (getScreenOrientation().equals("LandscapeOrientation")) {
-            mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            recyclerLargeViewer.setLayoutManager(mLinearLayoutManager);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(COUNT_COLUMNS, mGridLayoutManager.getSpanCount());
+    }
+
+    @SuppressLint("ResourceType")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
+        if (mGridLayoutManager.getSpanCount() == SPAN_COUNT_ONE) {
+            menu.findItem(R.id.menu_switch_layout).setIcon(R.drawable.ic_icon_list);
         } else {
-            mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            recyclerLargeViewer.setLayoutManager(mLinearLayoutManager);
+            menu.findItem(R.id.menu_switch_layout).setIcon(R.drawable.ic_icon_grid);
         }
-        sAdapterForLargeViewer = new AdapterForLargeViewer(this, mItemsLargeViewer, mLinearLayoutManager);
-        recyclerLargeViewer.setAdapter(sAdapterForLargeViewer);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_switch_layout) {
+            if (mGridLayoutManager.getSpanCount() == SPAN_COUNT_ONE) {
+                mGridLayoutManager.setSpanCount(SPAN_COUNT_THREE);
+                item.setIcon(R.drawable.ic_icon_grid);
+            } else {
+                mGridLayoutManager.setSpanCount(SPAN_COUNT_ONE);
+                item.setIcon(R.drawable.ic_icon_list);
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setInitialArrayListSmallViewer() {

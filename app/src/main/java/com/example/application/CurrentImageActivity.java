@@ -22,7 +22,6 @@ public class CurrentImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_current_image);
 
         ImageView imageView = (ImageView) findViewById(R.id.current_image_view);

@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.application.CurrentImageActivity;
@@ -24,40 +23,24 @@ import java.util.ArrayList;
 
 public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeViewer.ViewHolderLargeViewer> {
 
+    public static final int SPAN_COUNT_ONE = 1;
+    public static final int SPAN_COUNT_THREE = 3;
+
+    private static final int ITEM_TYPE_LIST = 1;
+    private static final int ITEM_TYPE_GRID = 2;
+
     private ArrayList<String> mArrayListItemsLargeViewer;
     private Activity mActivity;
 
     //модификатор public для видимости в AdapterForHorizontalViewer
-    public LinearLayoutManager mLinearLayoutManagerLargeViewer;
+    public GridLayoutManager mGridLayoutManagerLargeViewer;
 
-    public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer, LinearLayoutManager linearLayoutManager) {
-        this.mActivity = activity;
-        this.mArrayListItemsLargeViewer = itemsImageLargeViewer;
-        this.mLinearLayoutManagerLargeViewer = linearLayoutManager;
+    public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer, GridLayoutManager gridLayoutManager) {
+        mActivity = activity;
+        mArrayListItemsLargeViewer = itemsImageLargeViewer;
+        mGridLayoutManagerLargeViewer = gridLayoutManager;
     }
 
-    /*
-        //вариант загрузки из папки assets
-        public Drawable assetsDownloadImage(AssetManager manager, String filename) {
-            InputStream inputStream = null;
-            Drawable drawable = null;
-            try {
-                inputStream = manager.open(filename);
-                drawable = Drawable.createFromStream(inputStream, null);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return drawable;
-        }
-*/
     //вариант загрузки из папки assets
     public Bitmap loadBitmapFromAssets(Context context, String path) {
         InputStream stream = null;
@@ -82,8 +65,15 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
     @Override
     //метод для создания объекта ViewHolder, объект ViewHolder хранит данные по одному объекту Item списка
     public ViewHolderLargeViewer onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_largeviewer, parent, false);
-        return new ViewHolderLargeViewer(view);
+        View view;
+        if (viewType == ITEM_TYPE_LIST) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_for_list_largeviewer,
+                    parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_for_grid_largeviewer,
+                    parent, false);
+        }
+        return new ViewHolderLargeViewer(view, viewType);
     }
 
     //выполняется привязка объекта ViewHolder к объекту Item по определенной позиции
@@ -96,10 +86,19 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, CurrentImageActivity.class);
                 intent.putExtra("image_path", mArrayListItemsLargeViewer.get(position));
-                Log.e("Position", String.valueOf(position));
                 mActivity.startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        int spanCount = mGridLayoutManagerLargeViewer.getSpanCount();
+        if (spanCount == SPAN_COUNT_ONE) {
+            return ITEM_TYPE_LIST;
+        } else {
+            return ITEM_TYPE_GRID;
+        }
     }
 
     @Override
@@ -110,9 +109,13 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
     class ViewHolderLargeViewer extends RecyclerView.ViewHolder {
         private ImageView mItemImageView;
 
-        public ViewHolderLargeViewer(@NonNull View itemView) {
+        public ViewHolderLargeViewer(@NonNull View itemView, int viewType) {
             super(itemView);
-            mItemImageView = itemView.findViewById(R.id.vertical_image_view);
+            if (viewType == ITEM_TYPE_LIST) {
+                mItemImageView = itemView.findViewById(R.id.vertical_image_view);
+            } else {
+                mItemImageView = itemView.findViewById(R.id.grid_image_view);
+            }
         }
     }
 }

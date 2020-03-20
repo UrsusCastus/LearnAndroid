@@ -22,18 +22,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class AdapterForVerticalViewer extends RecyclerView.Adapter<AdapterForVerticalViewer.ViewHolderVertical> {
+public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeViewer.ViewHolderLargeViewer> {
 
-    private ArrayList<String> mArrayListVerticalItems;
+    private ArrayList<String> mArrayListItemsLargeViewer;
     private Activity mActivity;
 
     //модификатор public для видимости в AdapterForHorizontalViewer
-    public LinearLayoutManager mLinearLayoutManagerVertical;
+    public LinearLayoutManager mLinearLayoutManagerLargeViewer;
 
-    public AdapterForVerticalViewer(Activity activity, ArrayList<String> itemsImageViewAssets, LinearLayoutManager linearLayoutManager) {
+    public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer, LinearLayoutManager linearLayoutManager) {
         this.mActivity = activity;
-        this.mArrayListVerticalItems = itemsImageViewAssets;
-        this.mLinearLayoutManagerVertical = linearLayoutManager;
+        this.mArrayListItemsLargeViewer = itemsImageLargeViewer;
+        this.mLinearLayoutManagerLargeViewer = linearLayoutManager;
     }
 
     /*
@@ -81,21 +81,21 @@ public class AdapterForVerticalViewer extends RecyclerView.Adapter<AdapterForVer
     @NonNull
     @Override
     //метод для создания объекта ViewHolder, объект ViewHolder хранит данные по одному объекту Item списка
-    public ViewHolderVertical onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_vertical, parent, false);
-        return new ViewHolderVertical(view);
+    public ViewHolderLargeViewer onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item_largeviewer, parent, false);
+        return new ViewHolderLargeViewer(view);
     }
 
     //выполняется привязка объекта ViewHolder к объекту Item по определенной позиции
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolderVertical holder, final int position) {
-        final Bitmap currentBitmap = loadBitmapFromAssets(mActivity.getApplicationContext(), mArrayListVerticalItems.get(position));
+    public void onBindViewHolder(@NonNull final ViewHolderLargeViewer holder, final int position) {
+        final Bitmap currentBitmap = loadBitmapFromAssets(mActivity.getApplicationContext(), mArrayListItemsLargeViewer.get(position));
         holder.mItemImageView.setImageBitmap(currentBitmap);
         holder.mItemImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, CurrentImageActivity.class);
-                intent.putExtra("image_path", mArrayListVerticalItems.get(position));
+                intent.putExtra("image_path", mArrayListItemsLargeViewer.get(position));
                 Log.e("Position", String.valueOf(position));
                 mActivity.startActivity(intent);
             }
@@ -104,13 +104,13 @@ public class AdapterForVerticalViewer extends RecyclerView.Adapter<AdapterForVer
 
     @Override
     public int getItemCount() {
-        return mArrayListVerticalItems.size();
+        return mArrayListItemsLargeViewer.size();
     }
 
-    class ViewHolderVertical extends RecyclerView.ViewHolder {
+    class ViewHolderLargeViewer extends RecyclerView.ViewHolder {
         private ImageView mItemImageView;
 
-        public ViewHolderVertical(@NonNull View itemView) {
+        public ViewHolderLargeViewer(@NonNull View itemView) {
             super(itemView);
             mItemImageView = itemView.findViewById(R.id.vertical_image_view);
         }

@@ -1,6 +1,10 @@
 package com.example.application;
 
+//<<<<<<< HEAD
 import androidx.annotation.NonNull;
+//=======
+import androidx.annotation.Nullable;
+//>>>>>>> Add FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -8,14 +12,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+//<<<<<<< HEAD
 import android.view.Menu;
 import android.view.MenuItem;
+//=======
+import android.provider.MediaStore;
+import android.view.View;
+//>>>>>>> Add FloatingActionButton
 
 import com.example.application.task_2.AdapterForSmallViewer;
 import com.example.application.task_2.AdapterForLargeViewer;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_ONE;
@@ -30,9 +44,13 @@ public class ImageViewerActivity extends AppCompatActivity {
     private GridLayoutManager mGridLayoutManager;
     private static AdapterForLargeViewer sAdapterForLargeViewer;
 
+//<<<<<<< HEAD
     private RecyclerView recyclerLargeViewer;
 
     private int mColumnCount = 1;
+//=======
+    private final int REQUEST_CODE = 1;
+//>>>>>>> Add FloatingActionButton
 
     //модификатор static для видимости в AdapterForHorizontalViewer
     public static AdapterForLargeViewer getAdapterForLargeViewer() {
@@ -57,6 +75,37 @@ public class ImageViewerActivity extends AppCompatActivity {
         }
 
         initialRecyclerLargeViewer();
+
+        FloatingActionButton floatingActionButtonAdd = (FloatingActionButton) findViewById(R.id.floatingActionButtonAdd);
+        floatingActionButtonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImageFromGallery();
+            }
+        });
+    }
+
+    private void getImageFromGallery() {
+        //Намерение ACTION_PICK вызывает отображение галереи всех изображений, хранящихся на телефоне, позволяя выбрать одно изображение
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "SelectImage"), REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Bitmap selectedImage = null;
+        if (requestCode == REQUEST_CODE && data != null) {
+            Uri selectedImageURI = data.getData();
+            try {
+                selectedImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageURI);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initialRecyclerLargeViewer() {

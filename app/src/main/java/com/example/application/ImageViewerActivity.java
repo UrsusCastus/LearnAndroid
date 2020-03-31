@@ -1,10 +1,7 @@
 package com.example.application;
 
-//<<<<<<< HEAD
 import androidx.annotation.NonNull;
-//=======
 import androidx.annotation.Nullable;
-//>>>>>>> Add FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -17,13 +14,10 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-//<<<<<<< HEAD
 import android.view.Menu;
 import android.view.MenuItem;
-//=======
 import android.provider.MediaStore;
 import android.view.View;
-//>>>>>>> Add FloatingActionButton
 
 import com.example.application.task_2.AdapterForSmallViewer;
 import com.example.application.task_2.AdapterForLargeViewer;
@@ -44,13 +38,11 @@ public class ImageViewerActivity extends AppCompatActivity {
     private GridLayoutManager mGridLayoutManager;
     private static AdapterForLargeViewer sAdapterForLargeViewer;
 
-//<<<<<<< HEAD
     private RecyclerView recyclerLargeViewer;
 
     private int mColumnCount = 1;
-//=======
+
     private final int REQUEST_CODE = 1;
-//>>>>>>> Add FloatingActionButton
 
     //модификатор static для видимости в AdapterForHorizontalViewer
     public static AdapterForLargeViewer getAdapterForLargeViewer() {

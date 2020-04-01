@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +33,35 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
 
     private ArrayList<String> mArrayListItemsLargeViewer;
     private Activity mActivity;
+//    private Context mContext;
 
     //модификатор public для видимости в AdapterForHorizontalViewer
     public GridLayoutManager mGridLayoutManagerLargeViewer;
 
-    public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer, GridLayoutManager gridLayoutManager) {
+    public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer,
+                                 GridLayoutManager gridLayoutManager) {
         mActivity = activity;
         mArrayListItemsLargeViewer = itemsImageLargeViewer;
         mGridLayoutManagerLargeViewer = gridLayoutManager;
     }
+
+//    public AdapterForLargeViewer(Context context, ArrayList<String> itemsImageLargeViewer,
+//                                 GridLayoutManager gridLayoutManager) {
+//        mContext = context;
+//        mArrayListItemsLargeViewer = itemsImageLargeViewer;
+//        mGridLayoutManagerLargeViewer = gridLayoutManager;
+//    }
+
+/*    private Drawable loadThumb(Context context, String path) {
+        try {
+            InputStream stream = context.getAssets().open(path);
+            Drawable drawable = Drawable.createFromStream(stream, null);
+            return drawable;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }*/
 
     //вариант загрузки из папки assets
     public Bitmap loadBitmapFromAssets(Context context, String path) {
@@ -81,6 +103,9 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
     public void onBindViewHolder(@NonNull final ViewHolderLargeViewer holder, final int position) {
         final Bitmap currentBitmap = loadBitmapFromAssets(mActivity.getApplicationContext(), mArrayListItemsLargeViewer.get(position));
         holder.mItemImageView.setImageBitmap(currentBitmap);
+
+//        holder.mItemImageView.setImageDrawable(loadThumb(mContext, mArrayListItemsLargeViewer.get(position)));
+
         holder.mItemImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,4 +143,18 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
             }
         }
     }
+
+//    class ViewHolderLargeViewerFromGallery extends RecyclerView.ViewHolder {
+//
+//        public ViewHolderLargeViewerFromGallery(@NonNull View itemView) {
+//            super(itemView);
+//
+//        }
+//    }
+
+    /*public void updateArrayList(ArrayList<String> itemsImageLargeViewer) {
+        mArrayListItemsLargeViewer = itemsImageLargeViewer;
+        notifyDataSetChanged();
+    }*/
+
 }

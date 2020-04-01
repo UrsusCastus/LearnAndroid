@@ -9,20 +9,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.application.task_2.AdapterForSmallViewer;
 import com.example.application.task_2.AdapterForLargeViewer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -42,6 +46,7 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     private int mColumnCount = 1;
 
+    //уникальный код запроса
     private final int REQUEST_CODE = 1;
 
     //модификатор static для видимости в AdapterForHorizontalViewer
@@ -79,24 +84,29 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     private void getImageFromGallery() {
         //Намерение ACTION_PICK вызывает отображение галереи всех изображений, хранящихся на телефоне, позволяя выбрать одно изображение
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "SelectImage"), REQUEST_CODE);
+        Intent imageChooseIntent = new Intent(Intent.ACTION_PICK);
+        //указываю, где найти файл
+        File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String imageDirectoryPath = imageDirectory.getPath();
+        //сохраняю путь к файлу
+        Uri imageData = Uri.parse(imageDirectoryPath);
+        imageChooseIntent.setDataAndType(imageData, "image/*");
+        //запуск активити на результат
+        startActivityForResult(imageChooseIntent, REQUEST_CODE);
     }
 
+    //получение результата от активити, результат возвращается в качестве интента
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap selectedImage = null;
-        if (requestCode == REQUEST_CODE && data != null) {
+        //проверка на соответствие кода запроса
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri selectedImageURI = data.getData();
-            try {
-                selectedImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageURI);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String selectedImagePath = selectedImageURI.getPath();
+            Toast.makeText(this, selectedImagePath, Toast.LENGTH_SHORT).show();
+            mItemsLargeViewer.add(selectedImagePath);
+//            sAdapterForLargeViewer.updateArrayList(mItemsLargeViewer);
+            sAdapterForLargeViewer.notifyDataSetChanged();
         }
     }
 

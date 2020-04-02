@@ -12,22 +12,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.provider.MediaStore;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.application.task_2.AdapterForSmallViewer;
 import com.example.application.task_2.AdapterForLargeViewer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_ONE;
@@ -38,6 +34,7 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     ArrayList<Integer> mItemsSmallViewer = new ArrayList<Integer>(38);
     ArrayList<String> mItemsLargeViewer = new ArrayList<String>(38);
+    ArrayList<Uri> mItemsFromGallery = new ArrayList<Uri>();
 
     private GridLayoutManager mGridLayoutManager;
     private static AdapterForLargeViewer sAdapterForLargeViewer;
@@ -62,15 +59,15 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
+        if (savedInstanceState != null) {
+            mColumnCount = savedInstanceState.getInt(COUNT_COLUMNS);
+            mItemsFromGallery = savedInstanceState.getParcelableArrayList("ArrayOfUri");
+        }
+
         setInitialArrayListSmallViewer();
         initialRecyclerSmallViewer();
 
         setInitialArrayListLargeViewer();
-
-        if (savedInstanceState != null) {
-            mColumnCount = savedInstanceState.getInt(COUNT_COLUMNS);
-        }
-
         initialRecyclerLargeViewer();
 
         FloatingActionButton floatingActionButtonAdd = (FloatingActionButton) findViewById(R.id.floatingActionButtonAdd);
@@ -102,11 +99,9 @@ public class ImageViewerActivity extends AppCompatActivity {
         //проверка на соответствие кода запроса
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri selectedImageURI = data.getData();
-            String selectedImagePath = selectedImageURI.getPath();
-            Toast.makeText(this, selectedImagePath, Toast.LENGTH_SHORT).show();
-            mItemsLargeViewer.add(selectedImagePath);
-//            sAdapterForLargeViewer.updateArrayList(mItemsLargeViewer);
+            mItemsFromGallery.add(selectedImageURI);
             sAdapterForLargeViewer.notifyDataSetChanged();
+
         }
     }
 
@@ -116,7 +111,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         } else {
             mGridLayoutManager = new GridLayoutManager(this, mColumnCount, GridLayoutManager.HORIZONTAL, false);
         }
-        sAdapterForLargeViewer = new AdapterForLargeViewer(this, mItemsLargeViewer, mGridLayoutManager);
+        sAdapterForLargeViewer = new AdapterForLargeViewer(this, mItemsLargeViewer, mGridLayoutManager, mItemsFromGallery);
         recyclerLargeViewer = (RecyclerView) findViewById(R.id.rv_large_viewer);
         recyclerLargeViewer.setAdapter(sAdapterForLargeViewer);
         recyclerLargeViewer.setLayoutManager(mGridLayoutManager);
@@ -129,7 +124,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         } else {
             recyclerSmallViewer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         }
-        AdapterForSmallViewer adapterForSmallViewer = new AdapterForSmallViewer(this, mItemsSmallViewer);
+        AdapterForSmallViewer adapterForSmallViewer = new AdapterForSmallViewer(this, mItemsSmallViewer, mItemsFromGallery);
         recyclerSmallViewer.setAdapter(adapterForSmallViewer);
     }
 
@@ -137,6 +132,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(COUNT_COLUMNS, mGridLayoutManager.getSpanCount());
+        outState.putParcelableArrayList("ArrayOfUri", mItemsFromGallery);
     }
 
     @SuppressLint("ResourceType")

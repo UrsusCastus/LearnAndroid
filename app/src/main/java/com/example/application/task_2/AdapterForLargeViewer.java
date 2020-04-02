@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,36 +31,20 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
     private static final int ITEM_TYPE_GRID = 2;
 
     private ArrayList<String> mArrayListItemsLargeViewer;
+    private ArrayList<Uri> mArrayListItemsFromGallery;
+
     private Activity mActivity;
-//    private Context mContext;
 
     //модификатор public для видимости в AdapterForHorizontalViewer
     public GridLayoutManager mGridLayoutManagerLargeViewer;
 
     public AdapterForLargeViewer(Activity activity, ArrayList<String> itemsImageLargeViewer,
-                                 GridLayoutManager gridLayoutManager) {
+                                 GridLayoutManager gridLayoutManager, ArrayList<Uri> itemsFromGallery) {
         mActivity = activity;
         mArrayListItemsLargeViewer = itemsImageLargeViewer;
         mGridLayoutManagerLargeViewer = gridLayoutManager;
+        mArrayListItemsFromGallery = itemsFromGallery;
     }
-
-//    public AdapterForLargeViewer(Context context, ArrayList<String> itemsImageLargeViewer,
-//                                 GridLayoutManager gridLayoutManager) {
-//        mContext = context;
-//        mArrayListItemsLargeViewer = itemsImageLargeViewer;
-//        mGridLayoutManagerLargeViewer = gridLayoutManager;
-//    }
-
-/*    private Drawable loadThumb(Context context, String path) {
-        try {
-            InputStream stream = context.getAssets().open(path);
-            Drawable drawable = Drawable.createFromStream(stream, null);
-            return drawable;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }*/
 
     //вариант загрузки из папки assets
     public Bitmap loadBitmapFromAssets(Context context, String path) {
@@ -101,16 +84,24 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
     //выполняется привязка объекта ViewHolder к объекту Item по определенной позиции
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderLargeViewer holder, final int position) {
-        final Bitmap currentBitmap = loadBitmapFromAssets(mActivity.getApplicationContext(), mArrayListItemsLargeViewer.get(position));
-        holder.mItemImageView.setImageBitmap(currentBitmap);
-
-//        holder.mItemImageView.setImageDrawable(loadThumb(mContext, mArrayListItemsLargeViewer.get(position)));
+        if (position < mArrayListItemsLargeViewer.size()) {
+            final Bitmap currentBitmap = loadBitmapFromAssets(mActivity.getApplicationContext(), mArrayListItemsLargeViewer.get(position));
+            holder.mItemImageView.setImageBitmap(currentBitmap);
+        } else {
+            holder.mItemImageView.setImageURI(mArrayListItemsFromGallery.get(position - mArrayListItemsLargeViewer.size()));
+        }
 
         holder.mItemImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, CurrentImageActivity.class);
-                intent.putExtra("image_path", mArrayListItemsLargeViewer.get(position));
+                if (position < mArrayListItemsLargeViewer.size()) {
+                    intent.putExtra("image_path", mArrayListItemsLargeViewer.get(position));
+                } else {
+                    Uri tempPathUri = mArrayListItemsFromGallery.get(position - mArrayListItemsLargeViewer.size());
+                    String tempPath = tempPathUri.toString();
+                    intent.putExtra("image_path_from_gallery", tempPath);
+                }
                 mActivity.startActivity(intent);
             }
         });
@@ -128,7 +119,7 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
 
     @Override
     public int getItemCount() {
-        return mArrayListItemsLargeViewer.size();
+        return mArrayListItemsLargeViewer.size() + mArrayListItemsFromGallery.size();
     }
 
     class ViewHolderLargeViewer extends RecyclerView.ViewHolder {
@@ -143,18 +134,4 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
             }
         }
     }
-
-//    class ViewHolderLargeViewerFromGallery extends RecyclerView.ViewHolder {
-//
-//        public ViewHolderLargeViewerFromGallery(@NonNull View itemView) {
-//            super(itemView);
-//
-//        }
-//    }
-
-    /*public void updateArrayList(ArrayList<String> itemsImageLargeViewer) {
-        mArrayListItemsLargeViewer = itemsImageLargeViewer;
-        notifyDataSetChanged();
-    }*/
-
 }

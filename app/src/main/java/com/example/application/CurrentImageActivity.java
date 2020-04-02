@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -27,7 +27,15 @@ public class CurrentImageActivity extends AppCompatActivity {
         ImageView imageView = (ImageView) findViewById(R.id.current_image_view);
 
         String path = getIntent().getStringExtra("image_path");
-        imageView.setImageBitmap(loadBitmapFromAssets(this, path));
+        if (path != null) {
+            imageView.setImageBitmap(loadBitmapFromAssets(this, path));
+        }
+
+        String path_from_gallery = getIntent().getStringExtra("image_path_from_gallery");
+        Log.d("Question0", String.valueOf(path_from_gallery));
+        if (path_from_gallery != null) {
+            imageView.setImageURI(Uri.parse(path_from_gallery));
+        }
     }
 
     public Bitmap loadBitmapFromAssets(Context context, String path) {

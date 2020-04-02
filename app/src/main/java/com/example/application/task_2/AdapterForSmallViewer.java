@@ -1,6 +1,7 @@
 package com.example.application.task_2;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
 
     private Context mContext;
     private ArrayList<Integer> mArrayListHorizontalItems;
+    private ArrayList<Uri> mArrayListItemsFromGallery;
 
-    public AdapterForSmallViewer(Context context, ArrayList<Integer> arrayListItemsHorizontal) {
+    public AdapterForSmallViewer(Context context, ArrayList<Integer> arrayListItemsHorizontal, ArrayList<Uri> itemsFromGallery) {
         mContext = context;
         mArrayListHorizontalItems = arrayListItemsHorizontal;
+        mArrayListItemsFromGallery = itemsFromGallery;
     }
 
     @NonNull
@@ -33,7 +36,12 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
 
     @Override
     public void onBindViewHolder(@NonNull final AdapterForSmallViewer.ViewHolder holder, final int position) {
-        holder.itemImage.setImageResource(mArrayListHorizontalItems.get(position));
+
+        if (position < mArrayListHorizontalItems.size()) {
+            holder.itemImage.setImageResource(mArrayListHorizontalItems.get(position));
+        } else {
+            holder.itemImage.setImageURI(mArrayListItemsFromGallery.get(position - mArrayListHorizontalItems.size()));
+        }
 
         holder.itemImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +54,7 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
 
     @Override
     public int getItemCount() {
-        return mArrayListHorizontalItems.size();
+        return mArrayListHorizontalItems.size() + mArrayListItemsFromGallery.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

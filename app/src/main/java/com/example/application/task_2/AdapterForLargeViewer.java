@@ -96,11 +96,11 @@ public class AdapterForLargeViewer extends RecyclerView.Adapter<AdapterForLargeV
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, CurrentImageActivity.class);
                 if (position < mArrayListItemsLargeViewer.size()) {
-                    intent.putExtra("image_path", mArrayListItemsLargeViewer.get(position));
+                    intent.putExtra("pathOfImageFromAssets", mArrayListItemsLargeViewer.get(position));
                 } else {
-                    Uri tempPathUri = mArrayListItemsFromGallery.get(position - mArrayListItemsLargeViewer.size());
-                    String tempPath = tempPathUri.toString();
-                    intent.putExtra("image_path_from_gallery", tempPath);
+                    Uri UriImageGallery = mArrayListItemsFromGallery.get(position - mArrayListItemsLargeViewer.size());
+                    String pathOfImageGallery = UriImageGallery.toString();
+                    intent.putExtra("pathOfImageFromGallery", pathOfImageGallery);
                 }
                 mActivity.startActivity(intent);
             }

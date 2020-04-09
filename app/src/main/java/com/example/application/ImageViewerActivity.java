@@ -101,7 +101,6 @@ public class ImageViewerActivity extends AppCompatActivity {
             Uri selectedImageURI = data.getData();
             mItemsFromGallery.add(selectedImageURI);
             sAdapterForLargeViewer.notifyDataSetChanged();
-
         }
     }
 

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         };
         buttonFlashLight.setOnClickListener(buttonClickListener_1);
 
+
         Button buttonImageViewer = (Button) findViewById(R.id.button_2);
         View.OnClickListener buttonClickListener_2 = new View.OnClickListener() {
             @Override
@@ -35,6 +36,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         buttonImageViewer.setOnClickListener(buttonClickListener_2);
+
+
+        Button buttonMap = (Button) findViewById(R.id.button_map);
+        View.OnClickListener buttonClickListenerMap = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runMap(view);
+            }
+        };
+        buttonMap.setOnClickListener(buttonClickListenerMap);
 
     }
 
@@ -46,5 +57,10 @@ public class MainActivity extends AppCompatActivity {
     public void RunImageViewer(View view) {
         Intent intentImageViewer = new Intent(MainActivity.this, ImageViewerActivity.class);
         startActivity(intentImageViewer);
+    }
+
+    public void runMap(View view) {
+        Intent intentMap = new Intent(MainActivity.this, MapActivity.class);
+        startActivity(intentMap);
     }
 }

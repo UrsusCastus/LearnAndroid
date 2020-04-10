@@ -27,4 +27,15 @@
         android:textAllCaps="false"
         />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_map"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="Map"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        />
+
 </LinearLayout>

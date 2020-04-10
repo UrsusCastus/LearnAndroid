@@ -5,4 +5,6 @@
     <string name="flash">Flash</string>
     <string name="maximum_screen_brightness">Maximum screen brightness</string>
     <string name="flashlight">Flashlight</string>
+    <string name="title_activity_map">Map</string>
+    <string name="map_key" translatable="false">"AIzaSyDwJnDS3tmvwhLIrHJa5TsDs7YgKX1mjLI"</string>
 </resources>

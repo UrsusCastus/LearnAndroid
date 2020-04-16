@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements
+        GoogleMap.OnCameraMoveStartedListener,
+        OnMapReadyCallback {
 
     private static final String TAG = "MapActivityTag";
     private final String STATE_KEY_MAP_CAMERA = "MapActivitySaveStateCamera";
@@ -59,6 +60,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location mLocation;
     private SupportMapFragment mSupportMapFragment;
     private Map<String, LatLng> mListOfCityAndCoordinates = new HashMap<String, LatLng>();
+    private Spinner spCities;
+    private List<String> mListOfCity;
 
     //callback onMapReady вызывается, когда карта готова к использованию
     @Override
@@ -98,11 +101,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         //подключаются стандартные кнопки zoom
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        //отслеживание позиции камеры
+        mGoogleMap.setOnCameraMoveStartedListener(this);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         Log.d(TAG, "1. Callback onCreate is called");
@@ -132,12 +137,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    //метод оповещения, что GPS отключен
-                    //предоставляется возможность включить GPS
+                    //метод оповещения, что GPS отключен, предоставляется возможность включить GPS
                     showGPSDisabledAlertToUser();
-                    //задержка определения местоположения
                 }
                 getMyLocation();
+                spCities.setSelection(mListOfCity.size());
             }
         });
     }
@@ -168,11 +172,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mListOfCityAndCoordinates.put("Sochi",            new LatLng(43.581509, 39.722882));
         mListOfCityAndCoordinates.put("Ulyanovsk",        new LatLng(54.317002, 48.402243));
 
-        List<String> mListOfCity = new ArrayList<String>(mListOfCityAndCoordinates.keySet());
-        Spinner spCities = (Spinner) findViewById(R.id.spinner_of_city);
+        mListOfCity = new ArrayList<String>(mListOfCityAndCoordinates.keySet());
+        mListOfCity.add(mListOfCity.size(), "Unknown location");
 
-        ArrayAdapter<String> mAdapterForArrayOfCity = new ArrayAdapter<String>(this,
+        spCities = (Spinner) findViewById(R.id.spinner_of_city);
+
+        final ArrayAdapter<String> mAdapterForArrayOfCity = new ArrayAdapter<String>(this,
                 R.layout.custom_spinner_main, mListOfCity);
+
         mAdapterForArrayOfCity.setDropDownViewResource(R.layout.custom_spinner_dropdown);
 
         spCities.setAdapter(new CustomSpinnerAdapter(
@@ -184,9 +191,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         spCities.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mListOfCityAndCoordinates
-                        .get((String) parent.getItemAtPosition(position)), 10);
-                mGoogleMap.animateCamera(cameraUpdate);
+                if (position == mListOfCity.size()) {
+                    Toast.makeText(getApplicationContext(), "Select city, please.", Toast.LENGTH_SHORT).show();
+                } else {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mListOfCityAndCoordinates
+                            .get((String) parent.getItemAtPosition(position)), 10);
+                    mGoogleMap.animateCamera(cameraUpdate);
+                }
             }
 
             @Override
@@ -275,5 +286,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+    @Override
+    public void onCameraMoveStarted(int reason) {
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+            spCities.setSelection(mListOfCity.size());
+        }
     }
 }

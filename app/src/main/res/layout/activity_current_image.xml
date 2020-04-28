@@ -6,15 +6,23 @@
     android:orientation="vertical"
     tools:context=".CurrentImageActivity">
 
-    <ImageView
-        android:id="@+id/current_image_view"
+    <FrameLayout
+        android:id="@+id/container_for_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        />
+        android:layout_weight="1"
+        android:background="#B3B6DA" />
 
-    <GridLayout
+    <fragment
+        android:id="@+id/fragment_button_filter"
+        android:name="com.example.application.task_8.ButtonOfFilterFragment"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        tools:layout="@layout/fragment_button_of_filter" />
+
+<!--    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:columnCount="2"
@@ -76,6 +84,6 @@
             android:layout_columnSpan="2"
             android:textAllCaps="false"
             />
-    </GridLayout>
+    </GridLayout>-->
 
 </LinearLayout>

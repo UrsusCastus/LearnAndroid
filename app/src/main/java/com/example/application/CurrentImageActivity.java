@@ -1,145 +1,115 @@
 package com.example.application;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.example.application.task_8.ButtonOfFilterFragment;
+import com.example.application.task_8.CurrentImageFragment;
 
-public class CurrentImageActivity extends AppCompatActivity {
+public class CurrentImageActivity extends FragmentActivity {
 
-    private Button mBlackAndWhiteFilter;
-    private Button mBlurFilter;
-    private Button mBrightUpFilter;
-    private Button mBrightDownFilter;
-    private Button mReset;
+    private static final String TAG_CURRENT_IMAGE_FRAGMENT = "CurrentImageFragment";
 
-    private Bitmap bitmapOriginal;
-    private Bitmap bitmapChanged;
+    private Bitmap mBitmapOriginal;
 
-    @SuppressLint("SourceLockedOrientationActivity")
+    private Bitmap mBitmapChanged;
+
+    private CurrentImageFragment mCurrentImageFragment;
+    private FragmentManager mFragmentManager;
+    private FragmentTransaction mFragmentTransaction;
+
+    public static String sPathForImageAssets;
+    public static String sPathForImageGallery;
+
+    public static ImageView sImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_current_image);
 
-        mBlackAndWhiteFilter = (Button) findViewById(R.id.black_and_white_button);
-        mBlurFilter = (Button) findViewById(R.id.blur_filter);
-        mBrightUpFilter = (Button) findViewById(R.id.brightUp_filter);
-        mBrightDownFilter = (Button) findViewById(R.id.brightDown_filter);
-        mReset = (Button) findViewById(R.id.reset);
+        Log.d(CurrentImageFragment.TAG_CALLBACK, "onCreate - Activity");
 
-        mBlackAndWhiteFilter.getBackground().setColorFilter(0xFF3E8EC7, PorterDuff.Mode.MULTIPLY);
-        mBlurFilter.getBackground().setColorFilter(0xFF3E8EC7, PorterDuff.Mode.MULTIPLY);
-        mBrightUpFilter.getBackground().setColorFilter(0xFF3E8EC7, PorterDuff.Mode.MULTIPLY);
-        mBrightDownFilter.getBackground().setColorFilter(0xFF3E8EC7, PorterDuff.Mode.MULTIPLY);
-        mReset.getBackground().setColorFilter(0xFF0DA057, PorterDuff.Mode.MULTIPLY);
+        sPathForImageAssets = getIntent().getStringExtra("pathOfImageFromAssets");
+        sPathForImageGallery = getIntent().getStringExtra("pathOfImageFromGallery");
 
-        final ImageView imageView = (ImageView) findViewById(R.id.current_image_view);
+        mFragmentManager = getSupportFragmentManager();
 
-        final String pathOfImageFromAssets = getIntent().getStringExtra("pathOfImageFromAssets");
-        if (pathOfImageFromAssets != null) {
-            imageView.setImageBitmap(loadBitmapFromAssets(this, pathOfImageFromAssets));
+        if (savedInstanceState == null) {
+            mCurrentImageFragment = new CurrentImageFragment();
+            mFragmentTransaction = mFragmentManager.beginTransaction();
+            mFragmentTransaction
+                    .replace(R.id.container_for_fragment, mCurrentImageFragment, TAG_CURRENT_IMAGE_FRAGMENT)
+                    .commit();
+        } else {
+            //получаем ссылку по тегу на уже созданный фрагмент
+            mCurrentImageFragment = (CurrentImageFragment) mFragmentManager
+                    .findFragmentByTag(TAG_CURRENT_IMAGE_FRAGMENT);
         }
-
-        String pathOfImageFromGallery = getIntent().getStringExtra("pathOfImageFromGallery");
-        if (pathOfImageFromGallery != null) {
-            imageView.setImageURI(Uri.parse(pathOfImageFromGallery));
-        }
-
-        //Извлечь bitmap из imageView
-        bitmapOriginal = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        bitmapChanged = bitmapOriginal;
-
-        mBlackAndWhiteFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bitmapChanged = monochromeFilter(bitmapChanged);
-                imageView.setImageBitmap(bitmapChanged);
-            }
-        });
-
-        mBlurFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bitmapChanged = blurFilter(bitmapChanged, getApplicationContext());
-                imageView.setImageBitmap(bitmapChanged);
-            }
-        });
-
-        mBrightUpFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float colorCoefficient = 1.1f;
-                bitmapChanged = changeBrightness(bitmapChanged, colorCoefficient);
-                imageView.setImageBitmap(bitmapChanged);
-            }
-        });
-
-        mBrightDownFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float colorCoefficient = 0.9f;
-                bitmapChanged = changeBrightness(bitmapChanged, colorCoefficient);
-                imageView.setImageBitmap(bitmapChanged);
-            }
-        });
-
-        mReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imageView.setImageDrawable(null);
-                bitmapChanged = bitmapOriginal;
-                imageView.setImageBitmap(bitmapChanged);
-            }
-        });
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onStart() {
+        super.onStart();
+        Log.d(CurrentImageFragment.TAG_CALLBACK, "onStart - Activity");
+
+        sImageView = CurrentImageFragment.getImageView();
+
+        //получить оригинал картинки
+        //image, которая изменяется - достается из ImageView фрагмента
+        mBitmapOriginal = CurrentImageFragment.sBitmapOriginal;
+        mBitmapChanged = ((BitmapDrawable) sImageView.getDrawable()).getBitmap();
+
+        ButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
+        ButtonOfFilterFragment.blurFilter.setOnClickListener(v -> OnClickBlurFilterButton());
+        ButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> OnClickBrightUpFilterButton());
+        ButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> OnClickBrightDownFilterButton());
+        ButtonOfFilterFragment.reset.setOnClickListener(v -> OnClickResetButton());
     }
 
-    public Bitmap loadBitmapFromAssets(Context context, String path) {
-        InputStream stream = null;
-        try {
-            stream = context.getAssets().open(path);
-            Bitmap bitmapLoad = BitmapFactory.decodeStream(stream);
-            return bitmapLoad;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+    protected void onClickBlackAndWhiteFilterButton() {
+        mBitmapChanged = monochromeFilter(mBitmapChanged);
+        sImageView.setImageBitmap(mBitmapChanged);
+    }
+
+    protected void OnClickBlurFilterButton() {
+        mBitmapChanged = blurFilter(mBitmapChanged, getApplicationContext());
+        sImageView.setImageBitmap(mBitmapChanged);
+    }
+
+    protected void OnClickBrightUpFilterButton() {
+        float colorCoefficient = 1.1f;
+        mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
+        sImageView.setImageBitmap(mBitmapChanged);
+    }
+
+    protected void OnClickBrightDownFilterButton() {
+        float colorCoefficient = 0.9f;
+        mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
+        sImageView.setImageBitmap(mBitmapChanged);
+    }
+
+    protected void OnClickResetButton() {
+        sImageView.setImageDrawable(null);
+        mBitmapChanged = CurrentImageFragment.sBitmapOriginal;
+        sImageView.setImageBitmap(mBitmapChanged);
+        CurrentImageFragment.sSaveBitmap = null;
     }
 
     public static Bitmap monochromeFilter(Bitmap originalBitmap) {
@@ -180,7 +150,7 @@ public class CurrentImageActivity extends AppCompatActivity {
                 colorCoefficient, 0, 0, 0, 0,
                 0, colorCoefficient, 0, 0, 0,
                 0, 0, colorCoefficient, 0, 0,
-                0, 0, 0,                1, 0
+                0, 0, 0, 1, 0
         };
 
         ColorMatrix colorMatrix = new ColorMatrix(changeBrightnessMatrix);
@@ -191,7 +161,6 @@ public class CurrentImageActivity extends AppCompatActivity {
         Paint paint = new Paint();
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
         canvas.drawBitmap(bitmap, 0, 0, paint);
-
         return resultBitmap;
     }
 }

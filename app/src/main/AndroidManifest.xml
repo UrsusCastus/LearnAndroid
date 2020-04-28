@@ -34,8 +34,7 @@
         </activity>
         <activity android:name=".FlashLightActivity" />
         <activity android:name=".ImageViewerActivity" />
-        <activity android:name=".CurrentImageActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".CurrentImageActivity" />
         <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map" />

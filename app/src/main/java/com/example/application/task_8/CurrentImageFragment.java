@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.application.CurrentImageActivity;
 import com.example.application.R;
 
 import java.io.IOException;
@@ -25,15 +24,16 @@ import java.io.InputStream;
 public class CurrentImageFragment extends Fragment {
 
     public static final String TAG_CALLBACK = "CallBack";
-    public static Bitmap sBitmapOriginal;
-    public static Bitmap sSaveBitmap;
 
-    static ImageView sImageViewFragment;
+    public Bitmap bitmapOriginal;
+    public Bitmap saveBitmap;
+
+    private ImageView mImageViewFragment;
 
     private Context mContextOfFragment;
 
-    public static ImageView getImageView() {
-        return sImageViewFragment;
+    public ImageView getImageView() {
+        return mImageViewFragment;
     }
 
     @Override
@@ -56,16 +56,16 @@ public class CurrentImageFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         Log.d(TAG_CALLBACK, "onCreateView - Fragment of image");
         View rootView = inflater.inflate(R.layout.fragment_current_image, container, false);
-        sImageViewFragment = (ImageView) rootView.findViewById(R.id.current_image_view);
-        downloadImage(mContextOfFragment, sImageViewFragment);
-        Log.d("BitmapOriginal", String.valueOf(sBitmapOriginal));
+        mImageViewFragment = (ImageView) rootView.findViewById(R.id.current_image_view);
+        downloadImage(mContextOfFragment, mImageViewFragment);
+        Log.d("BitmapOriginal", String.valueOf(bitmapOriginal));
         return rootView;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sSaveBitmap = ((BitmapDrawable) sImageViewFragment.getDrawable()).getBitmap();
+        saveBitmap = ((BitmapDrawable) mImageViewFragment.getDrawable()).getBitmap();
         Log.d(TAG_CALLBACK, "onPause - Fragment of image");
     }
 
@@ -74,22 +74,24 @@ public class CurrentImageFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG_CALLBACK, "onDestroy - Fragment of image");
-        sSaveBitmap = null;
+        saveBitmap = null;
     }
 
-    public void downloadImage(Context context, ImageView imageView) {
-        if (sSaveBitmap != null) {
-            imageView.setImageBitmap(sSaveBitmap);
-        } else if (CurrentImageActivity.sPathForImageAssets != null) {
-            imageView.setImageBitmap(loadBitmapFromAssets(context, CurrentImageActivity.sPathForImageAssets));
-            sBitmapOriginal = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        } else if (CurrentImageActivity.sPathForImageGallery != null) {
-            imageView.setImageURI(Uri.parse(CurrentImageActivity.sPathForImageGallery));
-            sBitmapOriginal = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+    private void downloadImage(Context context, ImageView imageView) {
+        String pathForImageAssets = getActivity().getIntent().getStringExtra("pathOfImageFromAssets");
+        String pathForImageGallery = getActivity().getIntent().getStringExtra("pathOfImageFromGallery");
+        if (saveBitmap != null) {
+            imageView.setImageBitmap(saveBitmap);
+        } else if (pathForImageAssets != null) {
+            imageView.setImageBitmap(loadBitmapFromAssets(context, pathForImageAssets));
+            bitmapOriginal = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        } else if (pathForImageGallery != null) {
+            imageView.setImageURI(Uri.parse(pathForImageGallery));
+            bitmapOriginal = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         }
     }
 
-    public Bitmap loadBitmapFromAssets(Context context, String path) {
+    private Bitmap loadBitmapFromAssets(Context context, String path) {
         InputStream stream = null;
         try {
             stream = context.getAssets().open(path);

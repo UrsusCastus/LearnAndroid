@@ -16,18 +16,15 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.util.Log;
 
 import com.example.application.task_8.ButtonOfFilterFragment;
 import com.example.application.task_8.CurrentImageFragment;
 
 public class CurrentImageActivity extends FragmentActivity {
 
-    private static final String TAG_CURRENT_IMAGE_FRAGMENT = "CurrentImageFragment";
-
     private Bitmap mBitmapChanged;
-
     private CurrentImageFragment mCurrentImageFragment;
+    private ButtonOfFilterFragment mButtonOfFilterFragment;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
 
@@ -36,64 +33,61 @@ public class CurrentImageActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_image);
 
-        Log.d(CurrentImageFragment.TAG_CALLBACK, "onCreate - Activity");
-
         mFragmentManager = getSupportFragmentManager();
+        mButtonOfFilterFragment = (ButtonOfFilterFragment) mFragmentManager.findFragmentById(R.id.fragment_button_filter);
 
         if (savedInstanceState == null) {
             mCurrentImageFragment = new CurrentImageFragment();
             mFragmentTransaction = mFragmentManager.beginTransaction();
             mFragmentTransaction
-                    .replace(R.id.container_for_fragment, mCurrentImageFragment, TAG_CURRENT_IMAGE_FRAGMENT)
+                    .replace(R.id.container_for_fragment, mCurrentImageFragment, CurrentImageFragment.TAG_CURRENT_IMAGE_FRAGMENT)
                     .commit();
         } else {
             //получаем ссылку по тегу на уже созданный фрагмент
             mCurrentImageFragment = (CurrentImageFragment) mFragmentManager
-                    .findFragmentByTag(TAG_CURRENT_IMAGE_FRAGMENT);
+                    .findFragmentByTag(CurrentImageFragment.TAG_CURRENT_IMAGE_FRAGMENT);
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(CurrentImageFragment.TAG_CALLBACK, "onStart - Activity");
-
         //image, которая изменяется - достается из ImageView фрагмента
         mBitmapChanged = ((BitmapDrawable) mCurrentImageFragment.getImageView().getDrawable()).getBitmap();
 
-        ButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
-        ButtonOfFilterFragment.blurFilter.setOnClickListener(v -> OnClickBlurFilterButton());
-        ButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> OnClickBrightUpFilterButton());
-        ButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> OnClickBrightDownFilterButton());
-        ButtonOfFilterFragment.reset.setOnClickListener(v -> OnClickResetButton());
+        mButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
+        mButtonOfFilterFragment.blurFilter.setOnClickListener(v -> OnClickBlurFilterButton());
+        mButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> OnClickBrightUpFilterButton());
+        mButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> OnClickBrightDownFilterButton());
+        mButtonOfFilterFragment.reset.setOnClickListener(v -> OnClickResetButton());
     }
 
     protected void onClickBlackAndWhiteFilterButton() {
         mBitmapChanged = monochromeFilter(mBitmapChanged);
-        mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
     protected void OnClickBlurFilterButton() {
         mBitmapChanged = blurFilter(mBitmapChanged, getApplicationContext());
-        mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
     protected void OnClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
         mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
-        mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
     protected void OnClickBrightDownFilterButton() {
         float colorCoefficient = 0.9f;
         mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
-        mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
     protected void OnClickResetButton() {
-        mCurrentImageFragment.getImageView().setImageDrawable(null);
+        mCurrentImageFragment.setImageBitmap(null);
         mBitmapChanged = mCurrentImageFragment.bitmapOriginal;
-        mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
         mCurrentImageFragment.saveBitmap = null;
     }
 

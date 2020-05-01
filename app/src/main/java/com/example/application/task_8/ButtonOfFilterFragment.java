@@ -2,7 +2,6 @@ package com.example.application.task_8;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +15,15 @@ import com.example.application.R;
 
 public class ButtonOfFilterFragment extends Fragment {
 
-    public static Button blackAndWhiteFilter;
-    public static Button blurFilter;
-    public static Button brightUpFilter;
-    public static Button brightDownFilter;
-    public static Button reset;
+    public Button blackAndWhiteFilter;
+    public Button blurFilter;
+    public Button brightUpFilter;
+    public Button brightDownFilter;
+    public Button reset;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        Log.d(CurrentImageFragment.TAG_CALLBACK, "onCreateView - Fragment of button");
 
         View rootView = inflater.inflate(R.layout.fragment_button_of_filter, null);
 

@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.io.InputStream;
 
 public class CurrentImageFragment extends Fragment {
 
-    public static final String TAG_CALLBACK = "CallBack";
+    public static final String TAG_CURRENT_IMAGE_FRAGMENT = "CurrentImageFragment";
 
     public Bitmap bitmapOriginal;
     public Bitmap saveBitmap;
@@ -36,29 +35,29 @@ public class CurrentImageFragment extends Fragment {
         return mImageViewFragment;
     }
 
+    public void setImageBitmap(Bitmap bitmap) {
+        getImageView().setImageBitmap(bitmap);
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mContextOfFragment = context;
-        Log.d(TAG_CALLBACK, "onAttach - Fragment of image");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Log.d(TAG_CALLBACK, "onCreate - Fragment of image");
     }
 
     //onCreateView создает и возвращает иерархию View, связанную с фрагментом
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Log.d(TAG_CALLBACK, "onCreateView - Fragment of image");
         View rootView = inflater.inflate(R.layout.fragment_current_image, container, false);
         mImageViewFragment = (ImageView) rootView.findViewById(R.id.current_image_view);
         downloadImage(mContextOfFragment, mImageViewFragment);
-        Log.d("BitmapOriginal", String.valueOf(bitmapOriginal));
         return rootView;
     }
 
@@ -66,14 +65,12 @@ public class CurrentImageFragment extends Fragment {
     public void onPause() {
         super.onPause();
         saveBitmap = ((BitmapDrawable) mImageViewFragment.getDrawable()).getBitmap();
-        Log.d(TAG_CALLBACK, "onPause - Fragment of image");
     }
 
     //для нажатия кнопки назад
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG_CALLBACK, "onDestroy - Fragment of image");
         saveBitmap = null;
     }
 

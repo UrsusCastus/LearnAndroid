@@ -27,12 +27,12 @@ public class CurrentImageFragment extends Fragment {
     public Bitmap bitmapOriginal;
     public Bitmap saveBitmap;
 
-    private ImageView mImageViewFragment;
+    private ImageView mImageView;
 
-    private Context mContextOfFragment;
+    private Context mContext;
 
     public ImageView getImageView() {
-        return mImageViewFragment;
+        return mImageView;
     }
 
     public void setImageBitmap(Bitmap bitmap) {
@@ -42,7 +42,7 @@ public class CurrentImageFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mContextOfFragment = context;
+        mContext = context;
     }
 
     @Override
@@ -56,15 +56,15 @@ public class CurrentImageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_current_image, container, false);
-        mImageViewFragment = (ImageView) rootView.findViewById(R.id.current_image_view);
-        downloadImage(mContextOfFragment, mImageViewFragment);
+        mImageView = (ImageView) rootView.findViewById(R.id.current_image_view);
+        downloadImage(mContext, mImageView);
         return rootView;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        saveBitmap = ((BitmapDrawable) mImageViewFragment.getDrawable()).getBitmap();
+    public void onDestroyView() {
+        super.onDestroyView();
+        saveBitmap = ((BitmapDrawable) mImageView.getDrawable()).getBitmap();
     }
 
     //для нажатия кнопки назад

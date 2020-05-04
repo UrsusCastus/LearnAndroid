@@ -56,10 +56,10 @@ public class CurrentImageActivity extends FragmentActivity {
         mBitmapChanged = ((BitmapDrawable) mCurrentImageFragment.getImageView().getDrawable()).getBitmap();
 
         mButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
-        mButtonOfFilterFragment.blurFilter.setOnClickListener(v -> OnClickBlurFilterButton());
-        mButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> OnClickBrightUpFilterButton());
-        mButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> OnClickBrightDownFilterButton());
-        mButtonOfFilterFragment.reset.setOnClickListener(v -> OnClickResetButton());
+        mButtonOfFilterFragment.blurFilter.setOnClickListener(v -> onClickBlurFilterButton());
+        mButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> onClickBrightUpFilterButton());
+        mButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> onClickBrightDownFilterButton());
+        mButtonOfFilterFragment.reset.setOnClickListener(v -> onClickResetButton());
     }
 
     protected void onClickBlackAndWhiteFilterButton() {
@@ -67,24 +67,24 @@ public class CurrentImageActivity extends FragmentActivity {
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
-    protected void OnClickBlurFilterButton() {
+    protected void onClickBlurFilterButton() {
         mBitmapChanged = blurFilter(mBitmapChanged, getApplicationContext());
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
-    protected void OnClickBrightUpFilterButton() {
+    protected void onClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
         mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
-    protected void OnClickBrightDownFilterButton() {
+    protected void onClickBrightDownFilterButton() {
         float colorCoefficient = 0.9f;
         mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
     }
 
-    protected void OnClickResetButton() {
+    protected void onClickResetButton() {
         mCurrentImageFragment.setImageBitmap(null);
         mBitmapChanged = mCurrentImageFragment.bitmapOriginal;
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);

@@ -85,7 +85,6 @@ public class CurrentImageActivity extends FragmentActivity {
     }
 
     protected void onClickResetButton() {
-        mCurrentImageFragment.setImageBitmap(null);
         mBitmapChanged = mCurrentImageFragment.bitmapOriginal;
         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
         mCurrentImageFragment.saveBitmap = null;

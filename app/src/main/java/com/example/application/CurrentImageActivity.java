@@ -16,6 +16,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 
 import com.example.application.task_8.ButtonOfFilterFragment;
 import com.example.application.task_8.CurrentImageFragment;
@@ -23,7 +24,6 @@ import com.example.application.task_8.CurrentImageFragment;
 public class CurrentImageActivity extends FragmentActivity {
 
     private Bitmap mBitmapChanged;
-    private Bitmap mBitmapSave = null;
     private CurrentImageFragment mCurrentImageFragment;
     private ButtonOfFilterFragment mButtonOfFilterFragment;
     private FragmentManager mFragmentManager;
@@ -55,6 +55,7 @@ public class CurrentImageActivity extends FragmentActivity {
         super.onStart();
         //image, которая изменяется - достается из ImageView фрагмента
         mBitmapChanged = ((BitmapDrawable) mCurrentImageFragment.getImageView().getDrawable()).getBitmap();
+        Log.d("LogBitmap", "mBitmapChanged - before " + mBitmapChanged.toString());
 
         mButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
         mButtonOfFilterFragment.blurFilter.setOnClickListener(v -> onClickBlurFilterButton());
@@ -64,18 +65,25 @@ public class CurrentImageActivity extends FragmentActivity {
     }
 
     protected void onClickBlackAndWhiteFilterButton() {
-        mBitmapSave = mBitmapChanged;
         Runnable runnable = new Runnable() {
+            Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
+
             @Override
             public void run() {
-                mBitmapSave = monochromeFilter(mBitmapSave);
+                Log.d("LogBitmap", "bitmapSave - before Filter " + bitmapSave.toString());
+                Log.d("LogBitmap", "-------------------FilterWork----------------------");
+                bitmapSave = monochromeFilter(bitmapSave);
+                Log.d("LogBitmap", "mBitmapChanged - after Filter " + mBitmapChanged.toString());
+                Log.d("LogBitmap", "bitmapSave - after Filter " + bitmapSave.toString());
                 //обновление ImageView в главном потоке
                 //передаем new Runnable (действие) в Message, которое добавляется в очередь Looper of UIThread
                 //Объект Message - это инструкция
                 mCurrentImageFragment.getImageView().post(new Runnable() {
                     @Override
                     public void run() {
-                        mBitmapChanged = mBitmapSave;
+                        mBitmapChanged = bitmapSave;
+                        Log.d("LogBitmap", "---------------setInMainThread-------------");
+                        Log.d("LogBitmap", "mBitmapChanged - setToView " + mBitmapChanged.toString());
                         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
                     }
                 });
@@ -86,16 +94,16 @@ public class CurrentImageActivity extends FragmentActivity {
     }
 
     protected void onClickBlurFilterButton() {
-        mBitmapSave = mBitmapChanged;
         Runnable runnable = new Runnable() {
+            Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
+
             @Override
             public void run() {
-                mBitmapSave = blurFilter(mBitmapSave, getApplicationContext());
-
+                bitmapSave = blurFilter(bitmapSave, getApplicationContext());
                 mCurrentImageFragment.getImageView().post(new Runnable() {
                     @Override
                     public void run() {
-                        mBitmapChanged = mBitmapSave;
+                        mBitmapChanged = bitmapSave;
                         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
                     }
                 });
@@ -107,16 +115,16 @@ public class CurrentImageActivity extends FragmentActivity {
 
     protected void onClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
-        mBitmapSave = mBitmapChanged;
         Runnable runnable = new Runnable() {
+            Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
+
             @Override
             public void run() {
-                mBitmapSave = changeBrightness(mBitmapSave, colorCoefficient);
-
+                bitmapSave = changeBrightness(bitmapSave, colorCoefficient);
                 mCurrentImageFragment.getImageView().post(new Runnable() {
                     @Override
                     public void run() {
-                        mBitmapChanged = mBitmapSave;
+                        mBitmapChanged = bitmapSave;
                         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
                     }
                 });
@@ -128,16 +136,16 @@ public class CurrentImageActivity extends FragmentActivity {
 
     protected void onClickBrightDownFilterButton() {
         float colorCoefficient = 0.9f;
-        mBitmapSave = mBitmapChanged;
         Runnable runnable = new Runnable() {
+            Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
+
             @Override
             public void run() {
-                mBitmapSave = changeBrightness(mBitmapSave, colorCoefficient);
-
+                bitmapSave = changeBrightness(bitmapSave, colorCoefficient);
                 mCurrentImageFragment.getImageView().post(new Runnable() {
                     @Override
                     public void run() {
-                        mBitmapChanged = mBitmapSave;
+                        mBitmapChanged = bitmapSave;
                         mCurrentImageFragment.setImageBitmap(mBitmapChanged);
                     }
                 });

@@ -23,6 +23,7 @@ import com.example.application.task_8.CurrentImageFragment;
 public class CurrentImageActivity extends FragmentActivity {
 
     private Bitmap mBitmapChanged;
+    private Bitmap mBitmapSave = null;
     private CurrentImageFragment mCurrentImageFragment;
     private ButtonOfFilterFragment mButtonOfFilterFragment;
     private FragmentManager mFragmentManager;
@@ -63,25 +64,87 @@ public class CurrentImageActivity extends FragmentActivity {
     }
 
     protected void onClickBlackAndWhiteFilterButton() {
-        mBitmapChanged = monochromeFilter(mBitmapChanged);
-        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+        mBitmapSave = mBitmapChanged;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mBitmapSave = monochromeFilter(mBitmapSave);
+                //обновление ImageView в главном потоке
+                //передаем new Runnable (действие) в Message, которое добавляется в очередь Looper of UIThread
+                //Объект Message - это инструкция
+                mCurrentImageFragment.getImageView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBitmapChanged = mBitmapSave;
+                        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+                    }
+                });
+            }
+        };
+        Thread threadBlackAndWhiteFilter = new Thread(runnable);
+        threadBlackAndWhiteFilter.start();
     }
 
     protected void onClickBlurFilterButton() {
-        mBitmapChanged = blurFilter(mBitmapChanged, getApplicationContext());
-        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+        mBitmapSave = mBitmapChanged;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mBitmapSave = blurFilter(mBitmapSave, getApplicationContext());
+
+                mCurrentImageFragment.getImageView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBitmapChanged = mBitmapSave;
+                        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+                    }
+                });
+            }
+        };
+        Thread threadBlurFilter = new Thread(runnable);
+        threadBlurFilter.start();
     }
 
     protected void onClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
-        mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
-        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+        mBitmapSave = mBitmapChanged;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mBitmapSave = changeBrightness(mBitmapSave, colorCoefficient);
+
+                mCurrentImageFragment.getImageView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBitmapChanged = mBitmapSave;
+                        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+                    }
+                });
+            }
+        };
+        Thread threadBrightUpFilter = new Thread(runnable);
+        threadBrightUpFilter.start();
     }
 
     protected void onClickBrightDownFilterButton() {
         float colorCoefficient = 0.9f;
-        mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
-        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+        mBitmapSave = mBitmapChanged;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mBitmapSave = changeBrightness(mBitmapSave, colorCoefficient);
+
+                mCurrentImageFragment.getImageView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBitmapChanged = mBitmapSave;
+                        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+                    }
+                });
+            }
+        };
+        Thread threadBlurDownFilter = new Thread(runnable);
+        threadBlurDownFilter.start();
     }
 
     protected void onClickResetButton() {

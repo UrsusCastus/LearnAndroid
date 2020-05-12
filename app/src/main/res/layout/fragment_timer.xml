@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/activity_timer__layout_for_timer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/activity_timer__editText_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="#6EB0E0"
+        android:textColor="#6EB0E0"
+        android:textCursorDrawable="@drawable/custom_color_cursor"
+        android:textSize="40sp"
+        android:textAlignment="center"
+        android:hint="@string/secondsTimerEditText"
+        android:inputType="textPassword|number"
+        android:digits="0123456789"
+        android:maxLength="2"
+        android:imeOptions="flagNoExtractUi"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_timer__fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:elevation="0dp"
+        app:elevation="0dp"
+        app:backgroundTint="#6EB0E0"
+        app:srcCompat="@drawable/ic_timer_add" />
+
+</LinearLayout>

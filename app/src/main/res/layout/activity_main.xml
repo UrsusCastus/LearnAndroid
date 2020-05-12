@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/activity_main__button_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_1"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/buttonFlashLight"
@@ -17,23 +17,34 @@
         />
 
     <Button
+        android:id="@+id/activity_main__button_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_2"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:text="@string/button_image_viewer"
+        android:text="@string/buttonImageViewer"
         android:textSize="20sp"
         android:textAllCaps="false"
         />
 
     <Button
+        android:id="@+id/activity_main__button_map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_map"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:text="Map"
+        android:text="@string/buttonMap"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/activity_main__button_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="@string/buttonTimer"
         android:textSize="20sp"
         android:textAllCaps="false"
         />

@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Application</string>
     <string name="buttonFlashLight">FlashLight</string>
-    <string name="button_image_viewer">Image viewer</string>
+    <string name="buttonImageViewer">Image viewer</string>
+    <string name="buttonMap">Map</string>
+    <string name="buttonTimer">Timer</string>
+
     <string name="flash">Flash</string>
     <string name="maximum_screen_brightness">Maximum screen brightness</string>
     <string name="flashlight">Flashlight</string>
     <string name="title_activity_map">Map</string>
     <string name="map_key" translatable="false">"AIzaSyDwJnDS3tmvwhLIrHJa5TsDs7YgKX1mjLI"</string>
+
+    <string name="secondsTimerEditText">Seconds</string>
 </resources>

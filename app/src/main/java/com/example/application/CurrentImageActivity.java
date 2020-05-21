@@ -144,7 +144,7 @@ public class CurrentImageActivity extends FragmentActivity {
                 })
                 .subscribeOn(Schedulers.io())                               //задается поток
                 .observeOn(AndroidSchedulers.mainThread())                  //в какой поток вернется результат, вызывается один раз
-        .subscribe(bitmap -> mCurrentImageFragment.setImageBitmap(bitmap));
+                .subscribe(bitmap -> mCurrentImageFragment.setImageBitmap(bitmap));
     }
 
     //реализация с помощью coroutines (Kotlin)

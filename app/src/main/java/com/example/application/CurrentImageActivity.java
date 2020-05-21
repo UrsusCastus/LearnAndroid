@@ -21,33 +21,22 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.application.task_8.ButtonOfFilterFragment;
 import com.example.application.task_8.CurrentImageFragment;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.EmptyCoroutineContext;
 import task_10.BrightDownFilter;
 
 public class CurrentImageActivity extends FragmentActivity {
 
-    private static final String LOG_CURRENT_THREAD = "LogCurrentThread - ";
-    private static final float DOWN_BRIGHTNESS_COLOR_COEFFICIENT = 0.9f;  //-10%
-
-    //устанавливаем время ожидания незанятого потока перед завершением
-    private static final int KEEP_ALIVE_TIME = 1000;
-
-    //устанавливаем TimeUnit на миллисекунды
-    private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.MICROSECONDS;
-
-    //получаем количество доступных ядер процессора
-//    private static int sNumberOfCores = Runtime.getRuntime().availableProcessors();
+    private static final String LOG_CURRENT_THREAD = "LogCurrentThread";
     private static int sNumberThread = 2;
 
     private Bitmap mBitmapChanged;
@@ -56,15 +45,14 @@ public class CurrentImageActivity extends FragmentActivity {
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
 
-    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private ExecutorService mExecutorServiceBlur;
+
+    private BrightDownFilter mBrightDownFilter = new BrightDownFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_image);
-
-        Log.d(LOG_CURRENT_THREAD, "sNumberOfCores - " + sNumberThread);
-        Log.d(LOG_CURRENT_THREAD, "MainThreadName - " + Thread.currentThread().getName());
 
         mFragmentManager = getSupportFragmentManager();
         mButtonOfFilterFragment = (ButtonOfFilterFragment) mFragmentManager.findFragmentById(R.id.fragment_button_filter);
@@ -85,22 +73,16 @@ public class CurrentImageActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        mExecutorServiceBlur = Executors.newFixedThreadPool(sNumberThread);
+
         //image, которая изменяется - достается из ImageView фрагмента
         mBitmapChanged = ((BitmapDrawable) mCurrentImageFragment.getImageView().getDrawable()).getBitmap();
-
-        //?
-        BrightDownFilter brightDownFilter = new BrightDownFilter();
 
         mButtonOfFilterFragment.blackAndWhiteFilter.setOnClickListener(v -> onClickBlackAndWhiteFilterButton());
         mButtonOfFilterFragment.blurFilter.setOnClickListener(v -> onClickBlurFilterButton());
         mButtonOfFilterFragment.brightUpFilter.setOnClickListener(v -> onClickBrightUpFilterButton());
-
-        mButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> {
-            //?
-            //реализация с помощью coroutines (Kotlin)
-            mBitmapChanged = brightDownFilter.changeBrightnessBitmap(mBitmapChanged, DOWN_BRIGHTNESS_COLOR_COEFFICIENT);
-            mCurrentImageFragment.setImageBitmap(mBitmapChanged);
-        });
+        mButtonOfFilterFragment.brightDownFilter.setOnClickListener(v -> onClickBrightDownFilterButton());
 
         mButtonOfFilterFragment.reset.setOnClickListener(v -> onClickResetButton());
     }
@@ -130,7 +112,7 @@ public class CurrentImageActivity extends FragmentActivity {
         threadBlackAndWhiteFilter.start();
     }
 
-    //реализация потока с помощью ThreadPoolExecutor
+    //реализация потока с помощью ThreadPool
     protected void onClickBlurFilterButton() {
         Runnable runnable = new Runnable() {
             Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
@@ -145,89 +127,42 @@ public class CurrentImageActivity extends FragmentActivity {
                 });
             }
         };
-        //создание инстанса через конструктор ThreadPoolExecutor
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                sNumberThread >> 1,        //начальный размер пула (в два раза меньше sNumberOfCores)
-                sNumberThread,                         //максимальный размер пула
-                KEEP_ALIVE_TIME,                        //время ожидания потока до его завершения
-                KEEP_ALIVE_TIME_UNIT,                   //установка TimeUnit для времени ожидания потока
-                new LinkedBlockingQueue<Runnable>());   //очередь задач для потоков
-
-/*
-        //создание инстанса через фабричный метод класса Executors
-        //возвращается пул потоков, чей максимальный размер N
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-*/
 
         //постановка задачи на выполнение
-        threadPoolExecutor.execute(runnable);
+        mExecutorServiceBlur.execute(runnable);
     }
 
     //реализация потока с помощью RxJava
     protected void onClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
 
-        Observable<Bitmap> observable = Observable
-                .fromCallable(new Callable<Bitmap>() {
-                    @Override
-                    public Bitmap call() throws Exception {
-                        Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - fromCallable - " + Thread.currentThread().getName());
-                        mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
-                        return mBitmapChanged;
-                    }
+        Observable
+                .fromCallable(() -> {
+                    Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - fromCallable - " + Thread.currentThread().getName());
+                    mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
+                    return mBitmapChanged;
                 })
-                .subscribeOn(Schedulers.io())                   //задается поток
-                .observeOn(AndroidSchedulers.mainThread());     //в какой поток вернется результат, вызывается один раз
-        //подписка на наблюдаемый объект
-        observable.subscribe(new Observer<Bitmap>() {
-            //вызывается, когда Observer подписывается к Observable
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-                mCompositeDisposable.add(d);
-            }
-
-            //вызывается, когда Observable начнет эмитить данные (поступает новая порция данных)
-            @Override
-            public void onNext(@NonNull Bitmap bitmap) {
-//                Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - onNext - " + Thread.currentThread().getName());
-            }
-
-            //вызывается в случае ошибки
-            @Override
-            public void onError(@NonNull Throwable e) {
-
-            }
-
-            //вызывается, когда Observable завершает работу
-            @Override
-            public void onComplete() {
-                Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - onComplete - " + Thread.currentThread().getName());
-                mCurrentImageFragment.getImageView().setImageBitmap(mBitmapChanged);
-            }
-        });
+                .subscribeOn(Schedulers.io())                               //задается поток
+                .observeOn(AndroidSchedulers.mainThread())                  //в какой поток вернется результат, вызывается один раз
+        .subscribe(bitmap -> mCurrentImageFragment.setImageBitmap(bitmap));
     }
 
+    //реализация с помощью coroutines (Kotlin)
+    protected void onClickBrightDownFilterButton() {
+        mBrightDownFilter.applyBrightnessFilter(mBitmapChanged, new Continuation<Bitmap>() {
+            @NotNull
+            @Override
+            public CoroutineContext getContext() {
+                return EmptyCoroutineContext.INSTANCE;
+            }
 
-//    protected void onClickBrightDownFilterButton() {
-//        float colorCoefficient = 0.9f;
-//        Runnable runnable = new Runnable() {
-//            Bitmap bitmapSave = Bitmap.createBitmap(mBitmapChanged);
-//
-//            @Override
-//            public void run() {
-//                bitmapSave = changeBrightness(bitmapSave, colorCoefficient);
-//                mCurrentImageFragment.getImageView().post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mBitmapChanged = bitmapSave;
-//                        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
-//                    }
-//                });
-//            }
-//        };
-//        Thread threadBlurDownFilter = new Thread(runnable);
-//        threadBlurDownFilter.start();
-//    }
+            @Override
+            public void resumeWith(@NotNull Object o) {
+                mBitmapChanged = mBrightDownFilter.mBitmap;
+            }
+        });
+        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+    }
 
     protected void onClickResetButton() {
         mBitmapChanged = mCurrentImageFragment.bitmapOriginal;

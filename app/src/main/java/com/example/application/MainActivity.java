@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intentWeather = new Intent(MainActivity.this, WeatherActivity.class);
             startActivity(intentWeather);
         });
+
+        Button buttonWidgetWeather = findViewById(R.id.activity_main_button_widget_weather);
+        buttonWidgetWeather.setOnClickListener(view -> runWidgetWeather(view));
     }
 
     public void RunFlashLight(View view) {
@@ -81,5 +84,10 @@ public class MainActivity extends AppCompatActivity {
     public void runTimer(View view) {
         Intent intentTimer = new Intent(MainActivity.this, TimerActivity.class);
         startActivity(intentTimer);
+    }
+
+    public void runWidgetWeather(View view) {
+        Intent intentWidgetWeather = new Intent(MainActivity.this, WidgetWeatherActivity.class);
+        startActivity(intentWidgetWeather);
     }
 }

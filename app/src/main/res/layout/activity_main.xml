@@ -50,14 +50,26 @@
         />
 
     <Button
-        android:id="@+id/activity_main_button_weather_app"
+        android:id="@+id/activity_main_button_widget_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:text="@string/weather"
+        android:text="Widget weather"
         android:textSize="20sp"
         android:textAllCaps="false"
         />
 
+    <Button
+    android:id="@+id/activity_main_button_weather_app"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:text="@string/weather"
+    android:textSize="20sp"
+    android:textAllCaps="false"
+    />
+
 </LinearLayout>
+

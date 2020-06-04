@@ -1,13 +1,13 @@
 package com.example.application;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        Button buttonFlashLight = (Button) findViewById(R.id.activity_main__button_1);
+        Button buttonFlashLight = (Button) findViewById(R.id.activity_main_button_1);
         View.OnClickListener buttonClickListener_1 = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         buttonFlashLight.setOnClickListener(buttonClickListener_1);
 
 
-        Button buttonImageViewer = (Button) findViewById(R.id.activity_main__button_2);
+        Button buttonImageViewer = (Button) findViewById(R.id.activity_main_button_2);
         View.OnClickListener buttonClickListener_2 = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         buttonImageViewer.setOnClickListener(buttonClickListener_2);
 
 
-        Button buttonMap = (Button) findViewById(R.id.activity_main__button_map);
+        Button buttonMap = (Button) findViewById(R.id.activity_main_button_map);
         View.OnClickListener buttonClickListenerMap = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         };
         buttonMap.setOnClickListener(buttonClickListenerMap);
 
-        Button buttonTimer = (Button) findViewById(R.id.activity_main__button_timer);
+        Button buttonTimer = (Button) findViewById(R.id.activity_main_button_timer);
         View.OnClickListener buttonClickListenerTimer = new View.OnClickListener() {
             @Override
             public void onClick(View view) {

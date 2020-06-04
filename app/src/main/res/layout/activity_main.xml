@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/activity_main__button_1"
+        android:id="@+id/activity_main_button_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
@@ -17,7 +17,7 @@
         />
 
     <Button
-        android:id="@+id/activity_main__button_2"
+        android:id="@+id/activity_main_button_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
@@ -28,7 +28,7 @@
         />
 
     <Button
-        android:id="@+id/activity_main__button_map"
+        android:id="@+id/activity_main_button_map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
@@ -39,7 +39,7 @@
         />
 
     <Button
-        android:id="@+id/activity_main__button_timer"
+        android:id="@+id/activity_main_button_timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"

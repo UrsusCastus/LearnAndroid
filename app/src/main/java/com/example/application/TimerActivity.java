@@ -2,23 +2,17 @@ package com.example.application;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.widget.ScrollView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.application.task_11.TimerFragment;
 
 public class TimerActivity extends AppCompatActivity {
 
     private TimerFragment mTimerFragment;
-    private FragmentManager mTimerFragmentManager;
-    private FragmentTransaction mTimerFragmentTransaction;
-
-    private ScrollView mScrollOfTimer;
-
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -26,24 +20,17 @@ public class TimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
-        mTimerFragmentManager = getSupportFragmentManager();
+        FragmentManager timerFragmentManager = getSupportFragmentManager();
+        Fragment timeFragment = timerFragmentManager.findFragmentByTag(TimerFragment.TAG_SAVE_TIMER_FRAGMENT);
 
-        if (savedInstanceState == null) {
-            mTimerFragment = new TimerFragment();
-            mTimerFragmentTransaction = mTimerFragmentManager.beginTransaction();
-            mTimerFragmentTransaction
-                    .replace(R.id.activity_timer_container_for_fragment, mTimerFragment, mTimerFragment.TAG_SAVE_TIMER_FRAGMENT)
-                    .commit();
-        } else {
+        if (timeFragment != null) {
             //получаем ссылку по тегу на уже созданный фрагмент
-            mTimerFragment = (TimerFragment) mTimerFragmentManager
-                    .findFragmentByTag(TimerFragment.TAG_SAVE_TIMER_FRAGMENT);
-
-            mTimerFragment.mRootView.findViewWithTag("RootView");
-
+            mTimerFragment = (TimerFragment) timeFragment;
+        } else {
+            mTimerFragment = new TimerFragment();
+            timerFragmentManager.beginTransaction()
+                    .add(R.id.activity_timer_container_for_fragment, mTimerFragment, TimerFragment.TAG_SAVE_TIMER_FRAGMENT)
+                    .commit();
         }
-        mScrollOfTimer = findViewById(R.id.activity_timer__scroll_view_timer);
-        //прокрутка scrollView в конец
-        mScrollOfTimer.post(() -> mScrollOfTimer.fullScroll(ScrollView.FOCUS_DOWN));
     }
 }

@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WidgetWeatherActivity extends AppCompatActivity {
 
-//    final String htmlWidgetWeather = getString(R.string.html_widget);
-
     private WebView mWebView;
 
     @SuppressLint({"SetJavaScriptEnabled", "SourceLockedOrientationActivity"})
@@ -19,7 +17,6 @@ public class WidgetWeatherActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_widget_weather);
 
         final String htmlWidgetWeather = getString(R.string.html_widget);

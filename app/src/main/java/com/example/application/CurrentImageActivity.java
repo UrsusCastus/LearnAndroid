@@ -21,17 +21,12 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.application.task_8.ButtonOfFilterFragment;
 import com.example.application.task_8.CurrentImageFragment;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import kotlin.coroutines.Continuation;
-import kotlin.coroutines.CoroutineContext;
-import kotlin.coroutines.EmptyCoroutineContext;
 import task_10.BrightDownFilter;
 
 public class CurrentImageActivity extends FragmentActivity {
@@ -127,7 +122,6 @@ public class CurrentImageActivity extends FragmentActivity {
                 });
             }
         };
-
         //постановка задачи на выполнение
         mExecutorServiceBlur.execute(runnable);
     }
@@ -135,33 +129,30 @@ public class CurrentImageActivity extends FragmentActivity {
     //реализация потока с помощью RxJava
     protected void onClickBrightUpFilterButton() {
         float colorCoefficient = 1.1f;
-
+        //наблюдаемый источник
         Observable
+                //fromCallable выполняет код (метод) и возвращает результат (эмитит только один итем)
                 .fromCallable(() -> {
                     Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - fromCallable - " + Thread.currentThread().getName());
                     mBitmapChanged = changeBrightness(mBitmapChanged, colorCoefficient);
                     return mBitmapChanged;
                 })
-                .subscribeOn(Schedulers.io())                               //задается поток
-                .observeOn(AndroidSchedulers.mainThread())                  //в какой поток вернется результат, вызывается один раз
-                .subscribe(bitmap -> mCurrentImageFragment.setImageBitmap(bitmap));
+                //задает планировщик, на котором выполняется подписка на Observable - влияет на вышестоящие операторы. Указывается один раз
+                //Schedulers.io() - планировщик на неограниченном пуле потоков
+                .subscribeOn(Schedulers.io())
+                //в какой поток вернется результат. Задается планировщик, в котором выполняются операторы после observeOn
+                .observeOn(AndroidSchedulers.mainThread())
+                //оператор, соединяющий наблюдателя с источником
+                .subscribe(bitmap -> {
+                    Log.d(LOG_CURRENT_THREAD, "Thread of BrightUpFilter - setResult - " + Thread.currentThread().getName());
+                    mCurrentImageFragment.setImageBitmap(bitmap);
+                });
     }
 
     //реализация с помощью coroutines (Kotlin)
     protected void onClickBrightDownFilterButton() {
-        mBrightDownFilter.applyBrightnessFilter(mBitmapChanged, new Continuation<Bitmap>() {
-            @NotNull
-            @Override
-            public CoroutineContext getContext() {
-                return EmptyCoroutineContext.INSTANCE;
-            }
-
-            @Override
-            public void resumeWith(@NotNull Object o) {
-                mBitmapChanged = mBrightDownFilter.mBitmap;
-            }
-        });
-        mCurrentImageFragment.setImageBitmap(mBitmapChanged);
+        mBitmapChanged = ((BitmapDrawable) mCurrentImageFragment.getImageView().getDrawable()).getBitmap();
+        mBrightDownFilter.setImageBitmap(mBitmapChanged, mCurrentImageFragment.getImageView(), null);
     }
 
     protected void onClickResetButton() {

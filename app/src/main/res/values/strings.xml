@@ -12,4 +12,11 @@
     <string name="map_key" translatable="false">"AIzaSyDwJnDS3tmvwhLIrHJa5TsDs7YgKX1mjLI"</string>
 
     <string name="secondsTimerEditText">Seconds</string>
+    <string name="weather">Weather</string>
+
+    <!--weather fragment-->
+    <string name="select_city">Select city</string>
+    <string name="temperature">Temperature</string>
+    <string name="description">Description:</string>
+
 </resources>

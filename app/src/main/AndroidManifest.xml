@@ -28,7 +28,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -39,6 +38,7 @@
             android:name=".MapActivity"
             android:label="@string/title_activity_map" />
         <activity android:name=".TimerActivity"/>
+        <activity android:name=".WeatherActivity"/>
     </application>
 
 </manifest>

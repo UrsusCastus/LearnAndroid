@@ -9,47 +9,60 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.application.R;
+
 public class SelectCityDialogFragment extends DialogFragment {
 
-    public interface toPassData {
-        void getSelectedCity(String selectCity);
+    public interface SelectCityDialogListener {
+        void onCitySelected(String selectedCity, int indexItem);
     }
 
-    //?
-    private static int sCheckedItem = -1;
+    private static final String[] CITY_ARRAY = {"Moscow", "Saint Petersburg", "Sochi", "Ulyanovsk"};
 
-    private final String[] mCityArray = {"Moscow", "Saint Petersburg", "Sochi", "Ulyanovsk"};
-    private String mCurrentCity;
-    private toPassData callback;
+    private int mCheckedItem;
+    private SelectCityDialogListener mSelectCityListener;   //callback
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        callback = (toPassData) getTargetFragment();
-
-        if (savedInstanceState != null) {
-            sCheckedItem = savedInstanceState.getInt("sCheckedItem");
+        try {
+            //получаем ссылку на вызывающий фрагмент
+            mSelectCityListener = (SelectCityDialogListener) getTargetFragment();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Calling fragment must implement SelectCityDialogListener interface");
         }
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        if (savedInstanceState != null) {
+            mCheckedItem = savedInstanceState.getInt("mCheckedItem");
+        } else if (bundle != null) {
+            mCheckedItem = bundle.getInt("mIndexCheckedItem");
+        } else {
+            mCheckedItem = -1;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Select city")
-                .setSingleChoiceItems(mCityArray, sCheckedItem, new DialogInterface.OnClickListener() {
+        int saveUnToChecked = mCheckedItem;
+        builder.setTitle(R.string.SelectCity)
+                .setSingleChoiceItems(CITY_ARRAY, mCheckedItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-                        mCurrentCity = mCityArray[i];
-                        sCheckedItem = i;
+                        mCheckedItem = i;
                     }
                 })
-                .setPositiveButton("OK", (dialog, which) -> {
-                    callback.getSelectedCity(mCurrentCity);
-                    dialog.cancel();
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                    mSelectCityListener.onCitySelected(CITY_ARRAY[mCheckedItem], mCheckedItem);
+                    // закрытие диалога
+                    dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> {
+                    mSelectCityListener = null;
+                    mCheckedItem = saveUnToChecked;
+                    dialog.cancel();
                 });
         return builder.create();
     }
@@ -57,6 +70,12 @@ public class SelectCityDialogFragment extends DialogFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("sCheckedItem", sCheckedItem);
+        outState.putInt("mCheckedItem", mCheckedItem);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSelectCityListener = null;
     }
 }

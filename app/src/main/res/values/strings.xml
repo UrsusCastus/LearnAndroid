@@ -14,9 +14,15 @@
     <string name="secondsTimerEditText">Seconds</string>
     <string name="weather">Weather</string>
 
-    <!--weather fragment-->
+    <!--weather fragment-->\
+    <string name="openWeatherMapKey" translatable="false">6c8582d03d8c5dea07f358f4683f208c</string>
     <string name="select_city">Select city</string>
     <string name="temperature">Temperature</string>
     <string name="description">Description:</string>
+
+    <!--SelectCityDialogFragment-->
+    <string name="SelectCity">Select city</string>
+    <string name="OK">OK</string>
+    <string name="Cancel">Cancel</string>
 
 </resources>

@@ -1,18 +1,18 @@
 package com.example.application.task_13_weather;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.application.R;
 
@@ -28,30 +28,30 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-public class WeatherFragment extends Fragment implements SelectCityDialogFragment.toPassData {
+public class WeatherFragment extends Fragment implements SelectCityDialogFragment.SelectCityDialogListener {
     public static final String TAG_SAVE_WEATHER_FRAGMENT = "TagSaveWeatherFragment";
     private static final String LOG_WEATHER_FRAGMENT = "LogWeatherFragment";
-
-    private static final String API_KEY = "6c8582d03d8c5dea07f358f4683f208c";
     private static final String API_LINK = "https://api.openweathermap.org/data/2.5/weather";
 
+    private static String sApiKey;
     private HashMap<String, Integer> mMapIdCities = new HashMap<String, Integer>(4);
-
     private TextView mCityTextView;
     private TextView mTemperatureTextView;
     private TextView mDescriptionTextView;
-
     private Button mButtonSelectCity;
 
+    private int mIndexCheckedItem = -1;
     private String mCity;
     private String mTemperature;
     private String mDescription;
+    private Handler mHandler;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
+        sApiKey = getResources().getString(R.string.openWeatherMapKey);
+        mHandler = new Handler();
         mMapIdCities.put("Moscow", 524901);
         mMapIdCities.put("Saint Petersburg", 498817);
         mMapIdCities.put("Sochi", 491422);
@@ -73,7 +73,6 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (savedInstanceState != null) {
             mCityTextView.setText(savedInstanceState.getString("CurrentCity"));
             mTemperatureTextView.setText(savedInstanceState.getString("Temperature"));
@@ -83,15 +82,15 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
             mTemperatureTextView.setText(R.string.temperature);
             mDescriptionTextView.setText(R.string.description);
         }
-        mButtonSelectCity.setOnClickListener(v -> {
-            FragmentManager fragmentManager = getFragmentManager();
-            //SelectCityDialogFragment extends DialogFragment
-            SelectCityDialogFragment selectCityDialogFragment = new SelectCityDialogFragment();
-            selectCityDialogFragment.setCancelable(false);
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            selectCityDialogFragment.show(transaction, "SelectCity");
 
+        mButtonSelectCity.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("mIndexCheckedItem", mIndexCheckedItem);
+            SelectCityDialogFragment selectCityDialogFragment = new SelectCityDialogFragment();
+            selectCityDialogFragment.setArguments(bundle);
+            selectCityDialogFragment.setCancelable(false);
             selectCityDialogFragment.setTargetFragment(WeatherFragment.this, 1);
+            selectCityDialogFragment.show(getFragmentManager(), "SelectCityDialogFragment");
         });
     }
 
@@ -103,9 +102,9 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
         outState.putString("Description", mDescriptionTextView.getText().toString());
     }
 
-    private static String apiRequestString(Integer cityID) {
+    private static String apiRequestString(int cityId) {
         StringBuilder stringBuilder = new StringBuilder(API_LINK);
-        stringBuilder.append(String.format("?id=%s&appid=%s&units=metric", cityID, API_KEY));
+        stringBuilder.append(String.format("?id=%s&appid=%s&units=metric", cityId, sApiKey));
         return stringBuilder.toString();
     }
 
@@ -134,13 +133,17 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
                 bufferedReader.close();
                 httpURLConnection.disconnect();
             } else {
-                Log.e(LOG_WEATHER_FRAGMENT, String.valueOf(httpURLConnection.getResponseCode()));
+                String responseCode = String.valueOf(httpURLConnection.getResponseCode());
+                Log.e(LOG_WEATHER_FRAGMENT, responseCode);
+                Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                 return null;
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Log.e(LOG_WEATHER_FRAGMENT, "IOException");
+            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         return httpData;
@@ -167,9 +170,12 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mCityTextView.post(() -> mCityTextView.setText(mCity));
-                mTemperatureTextView.post(() -> mTemperatureTextView.setText(String.valueOf(mTemperature)));
-                mDescriptionTextView.post(() -> mDescriptionTextView.setText(mDescription));
+
+                mHandler.post(() -> {
+                    mCityTextView.setText(mCity);
+                    mTemperatureTextView.setText(String.valueOf(mTemperature));
+                    mDescriptionTextView.setText(mDescription);
+                });
             }
         };
         Thread thread = new Thread(runnable);
@@ -178,9 +184,10 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
     }
 
     @Override
-    public void getSelectedCity(String selectCity) {
-        mCity = selectCity;
-        Integer selectedCityID = mMapIdCities.get(selectCity);
+    public void onCitySelected(String selectedCity, int indexItem) {
+        mCity = selectedCity;
+        Integer selectedCityID = mMapIdCities.get(selectedCity);
         getWeatherData(selectedCityID);
+        mIndexCheckedItem = indexItem;
     }
 }

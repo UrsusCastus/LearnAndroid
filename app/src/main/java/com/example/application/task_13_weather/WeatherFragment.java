@@ -28,8 +28,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-public class WeatherFragment extends Fragment implements SelectCityDialogFragment.SelectCityDialogListener {
+public class WeatherFragment extends Fragment {
     public static final String TAG_SAVE_WEATHER_FRAGMENT = "TagSaveWeatherFragment";
+    private static final String TAG_DIALOG_FRAGMENT = "TagSelectCityDialogFragment";
     private static final String LOG_WEATHER_FRAGMENT = "LogWeatherFragment";
     private static final String API_LINK = "https://api.openweathermap.org/data/2.5/weather";
 
@@ -48,6 +49,7 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.e(LOG_WEATHER_FRAGMENT, "onCreate");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         sApiKey = getResources().getString(R.string.openWeatherMapKey);
@@ -84,13 +86,23 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
         }
 
         mButtonSelectCity.setOnClickListener(v -> {
+            SelectCityDialogFragment selectCityDialogFragment = new SelectCityDialogFragment();
+
+            selectCityDialogFragment.setSelectCityDialogListener(new SelectCityDialogListener() {
+                @Override
+                public void onCitySelected(String selectedCity, int indexItem) {
+                    mCity = selectedCity;
+                    Integer selectedCityID = mMapIdCities.get(selectedCity);
+                    getWeatherData(selectedCityID);
+                    mIndexCheckedItem = indexItem;
+                }
+            });
+
             Bundle bundle = new Bundle();
             bundle.putInt("mIndexCheckedItem", mIndexCheckedItem);
-            SelectCityDialogFragment selectCityDialogFragment = new SelectCityDialogFragment();
             selectCityDialogFragment.setArguments(bundle);
             selectCityDialogFragment.setCancelable(false);
-            selectCityDialogFragment.setTargetFragment(WeatherFragment.this, 1);
-            selectCityDialogFragment.show(getFragmentManager(), "SelectCityDialogFragment");
+            selectCityDialogFragment.show(getFragmentManager(), TAG_DIALOG_FRAGMENT);
         });
     }
 
@@ -100,6 +112,25 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
         outState.putString("CurrentCity", mCityTextView.getText().toString());
         outState.putString("Temperature", mTemperatureTextView.getText().toString());
         outState.putString("Description", mDescriptionTextView.getText().toString());
+    }
+
+    @Override
+    public void onResume() {
+        Log.e(LOG_WEATHER_FRAGMENT, "onResume");
+        super.onResume();
+        SelectCityDialogFragment selectCityDialogFragment = (SelectCityDialogFragment) getFragmentManager()
+                .findFragmentByTag(TAG_DIALOG_FRAGMENT);
+        if (selectCityDialogFragment != null) {
+            selectCityDialogFragment.setSelectCityDialogListener(new SelectCityDialogListener() {
+                @Override
+                public void onCitySelected(String selectedCity, int indexItem) {
+                    mCity = selectedCity;
+                    Integer selectedCityID = mMapIdCities.get(selectedCity);
+                    getWeatherData(selectedCityID);
+                    mIndexCheckedItem = indexItem;
+                }
+            });
+        }
     }
 
     private static String apiRequestString(int cityId) {
@@ -181,13 +212,5 @@ public class WeatherFragment extends Fragment implements SelectCityDialogFragmen
         Thread thread = new Thread(runnable);
         Log.d(LOG_WEATHER_FRAGMENT, thread.getName());
         thread.start();
-    }
-
-    @Override
-    public void onCitySelected(String selectedCity, int indexItem) {
-        mCity = selectedCity;
-        Integer selectedCityID = mMapIdCities.get(selectedCity);
-        getWeatherData(selectedCityID);
-        mIndexCheckedItem = indexItem;
     }
 }

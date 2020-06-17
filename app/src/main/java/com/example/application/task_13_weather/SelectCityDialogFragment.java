@@ -12,26 +12,9 @@ import androidx.fragment.app.DialogFragment;
 import com.example.application.R;
 
 public class SelectCityDialogFragment extends DialogFragment {
-
-    public interface SelectCityDialogListener {
-        void onCitySelected(String selectedCity, int indexItem);
-    }
-
     private static final String[] CITY_ARRAY = {"Moscow", "Saint Petersburg", "Sochi", "Ulyanovsk"};
-
     private int mCheckedItem;
     private SelectCityDialogListener mSelectCityListener;   //callback
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            //получаем ссылку на вызывающий фрагмент
-            mSelectCityListener = (SelectCityDialogListener) getTargetFragment();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement SelectCityDialogListener interface");
-        }
-    }
 
     @NonNull
     @Override
@@ -77,5 +60,9 @@ public class SelectCityDialogFragment extends DialogFragment {
     public void onDetach() {
         super.onDetach();
         mSelectCityListener = null;
+    }
+
+    public void setSelectCityDialogListener (SelectCityDialogListener callbackListener) {
+        mSelectCityListener = callbackListener;
     }
 }

@@ -39,6 +39,8 @@
             android:label="@string/title_activity_map" />
         <activity android:name=".TimerActivity"/>
         <activity android:name=".WeatherActivity"/>
-        <activity android:name=".WidgetWeatherActivity" />
+        <activity android:name=".WidgetWeatherActivity"
+            android:configChanges="orientation|screenSize" >
+        </activity>
     </application>
 </manifest>

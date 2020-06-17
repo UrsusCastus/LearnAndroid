@@ -1,20 +1,21 @@
 package com.example.application;
 
 import android.annotation.SuppressLint;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class WidgetWeatherActivity extends AppCompatActivity {
-
+    private static final String TAG_WIDGET_WEATHER_ACTIVITY = "TagWidgetWeatherActivity";
     private WebView mWebView;
 
-    @SuppressLint({"SetJavaScriptEnabled", "SourceLockedOrientationActivity"})
+    @SuppressLint({"SetJavaScriptEnabled", "SourceLockedOrientationActivity", "LongLogTag"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG_WIDGET_WEATHER_ACTIVITY, "Run onCreate");
         getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_widget_weather);

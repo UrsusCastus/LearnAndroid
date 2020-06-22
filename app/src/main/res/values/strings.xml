@@ -26,6 +26,10 @@
     <string name="OK">OK</string>
     <string name="Cancel">Cancel</string>
 
+    <!--WeatherFragment-->
+    <string name="Today">(Today)</string>
+    <string name="Tomorrow">(Tomorrow)</string>
+
     <string name="html_widget" formatted="false" translatable="false">
         <![CDATA[
         <center>

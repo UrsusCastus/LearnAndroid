@@ -1,8 +1,10 @@
-Hello, Android
+Данный проект - это выполнение определенных задач для изучения ОС Android.
 
-Борда (aka доска aka дашборд aka канбан)
-https://github.com/matreshkin/ArturLearnAndroid1/projects/1
+Борда (aka доска, aka дашборд, aka канбан)
+https://github.com/UrsusCastus/LearnAndroid/projects/1
+	
+Open tasks
+https://github.com/UrsusCastus/LearnAndroid/issues
 
-Задачи
-https://github.com/matreshkin/ArturLearnAndroid1/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc
-
+Closed tasks
+https://github.com/UrsusCastus/LearnAndroid/issues?q=is%3Aissue+is%3Aclosed

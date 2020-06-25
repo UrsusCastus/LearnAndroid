@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.application.task_13_weather.WeatherFragment;
+import com.example.application.task_13_14_weather.WeatherFragment;
 
 public class WeatherActivity extends AppCompatActivity {
 

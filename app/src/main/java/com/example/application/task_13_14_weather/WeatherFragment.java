@@ -1,4 +1,4 @@
-package com.example.application.task_13_weather;
+package com.example.application.task_13_14_weather;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,12 +6,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +38,12 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -68,7 +72,6 @@ public class WeatherFragment extends Fragment {
     private TextView mTemperatureTextView;
     private TextView mDescriptionTextView;
     private Button mButtonSelectCity;
-    private HorizontalScrollView mHorizontalScrollView;
     private TextView mDateTodayTextView;
     private TextView mDateTomorrowTextView;
     private int mIndexCheckedItem = -1;
@@ -76,12 +79,14 @@ public class WeatherFragment extends Fragment {
     private String mTemperature;
     private String mDescription;
     private Handler mHandler;
-    private LinkedHashMap<String, String> mMapOfHourlyDataToday = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> mMapOfDailyDataTomorrow = new LinkedHashMap<String, String>();
-    private GridLayout mGridLayoutDataToday;
-    private GridLayout mGridLayoutDataTomorrow;
     private StringBuilder mStringBuilderDateToday = new StringBuilder();
     private StringBuilder mStringBuilderDateTomorrow = new StringBuilder();
+    private LinearLayout mLinearLayout;
+
+    private List<HourlyTodayDataStructure> mListHourlyDataToday = Collections
+            .synchronizedList(new ArrayList<HourlyTodayDataStructure>());
+    private List<TomorrowDataStructure> mListDailyDataTomorrow = Collections
+            .synchronizedList(new ArrayList<TomorrowDataStructure>());
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -108,14 +113,13 @@ public class WeatherFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+        mLinearLayout = rootView.findViewById(R.id.activity_weather_linear_layout);
         mCityTextView = rootView.findViewById(R.id.activity_weather_city);
         mTemperatureTextView = rootView.findViewById(R.id.activity_weather_temperature_text);
         mDescriptionTextView = rootView.findViewById(R.id.activity_weather_description);
         mButtonSelectCity = rootView.findViewById(R.id.activity_weather_button_select_city);
-        mHorizontalScrollView = rootView.findViewById(R.id.horizontal_scroll_view_for_hourly_data);
         mDateTodayTextView = rootView.findViewById(R.id.activity_weather_date_today);
         mDateTomorrowTextView = rootView.findViewById(R.id.activity_weather_date_tomorrow);
-        mGridLayoutDataTomorrow = rootView.findViewById(R.id.activity_weather_data_tomorrow_grid);
         return rootView;
     }
 
@@ -126,7 +130,6 @@ public class WeatherFragment extends Fragment {
             mCityTextView.setText(savedInstanceState.getString("CurrentCity"));
             mTemperatureTextView.setText(savedInstanceState.getString("Temperature"));
             mDescriptionTextView.setText(savedInstanceState.getString("Description"));
-
             mDateTodayTextView.setText(savedInstanceState.getString("currentDateString"));
             mDateTomorrowTextView.setText(savedInstanceState.getString("tomorrowDateString"));
 
@@ -228,12 +231,13 @@ public class WeatherFragment extends Fragment {
                 return null;
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            Log.e(LOG_WEATHER_FRAGMENT, "MalformedURLException - " + e.toString());
         } catch (IOException e) {
-            Log.e(LOG_WEATHER_FRAGMENT, "IOException");
-            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            mHandler.post(() -> Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show());
             e.printStackTrace();
+            Log.e(LOG_WEATHER_FRAGMENT, "IOException - " + e.toString());
         }
         return httpData;
     }
@@ -257,6 +261,7 @@ public class WeatherFragment extends Fragment {
                         mTemperature = Math.round(temperature) + " °C";
                     }
                 } catch (JSONException e) {
+                    Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -290,6 +295,7 @@ public class WeatherFragment extends Fragment {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d(LOG_WEATHER_FRAGMENT, "Thread onFailure - " + Thread.currentThread().getName());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -304,6 +310,8 @@ public class WeatherFragment extends Fragment {
                 String ForecastsWeatherData = response.body().string();
                 String dateToday = getCurrentDate();
                 String dateTomorrow = getDateTomorrow();
+                mListHourlyDataToday.clear();
+                mListDailyDataTomorrow.clear();
                 try {
                     JSONObject forecastsWeatherDataObject = new JSONObject(ForecastsWeatherData);
 
@@ -321,7 +329,8 @@ public class WeatherFragment extends Fragment {
                                 stringBuilderTemperature.append("+");
                             }
                             stringBuilderTemperature.append(Math.round(temperature)).append("°");
-                            mMapOfHourlyDataToday.put(timeOfDay, stringBuilderTemperature.toString());
+                            mListHourlyDataToday.add(new HourlyTodayDataStructure(timeOfDay,
+                                    stringBuilderTemperature.toString()));
                         }
                     }
 
@@ -362,10 +371,14 @@ public class WeatherFragment extends Fragment {
                             stringBuilderDay.append(Math.round(temperatureDay)).append("°");
                             stringBuilderEvening.append(Math.round(temperatureEvening)).append("°");
 
-                            mMapOfDailyDataTomorrow.put("Night", stringBuilderNight.toString());
-                            mMapOfDailyDataTomorrow.put("Morning", stringBuilderMorning.toString());
-                            mMapOfDailyDataTomorrow.put("Day", stringBuilderDay.toString());
-                            mMapOfDailyDataTomorrow.put("Evening", stringBuilderEvening.toString());
+                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Night",
+                                    stringBuilderNight.toString()));
+                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Morning",
+                                    stringBuilderMorning.toString()));
+                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Day",
+                                    stringBuilderDay.toString()));
+                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Evening",
+                                    stringBuilderEvening.toString()));
                         }
                     }
                 } catch (JSONException e) {
@@ -374,7 +387,7 @@ public class WeatherFragment extends Fragment {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(LOG_WEATHER_FRAGMENT, "mHandler.post - " + Thread.currentThread().getName());
+                        Log.d(LOG_WEATHER_FRAGMENT, "Thread mHandler.post - " + Thread.currentThread().getName());
                         mStringBuilderDateToday.append(changeDateFormat(dateToday, DATE_FORMAT))
                                 .append(" ").append(getResources().getString(R.string.Today));
                         mStringBuilderDateTomorrow.append(changeDateFormat(dateTomorrow, DATE_FORMAT))
@@ -382,13 +395,20 @@ public class WeatherFragment extends Fragment {
                         mDateTodayTextView.setText(mStringBuilderDateToday);
                         mDateTomorrowTextView.setText(mStringBuilderDateTomorrow);
 
-                        //удаляю ранее созданные View после выбора города
-                        mHorizontalScrollView.removeAllViews();
-                        mGridLayoutDataTomorrow.removeAllViews();
+                        View rootView = WeatherFragment.this.getView();
+                        if (rootView != null) {
+                            LinearLayout linearLayout = rootView.findViewById(R.id.activity_weather_linear_layout);
+                            HorizontalScrollView horizontalScrollView = rootView.findViewById(R.id.horizontal_scroll_view_for_hourly_data);
+                            GridLayout gridLayoutDataToday = rootView.findViewWithTag("gridLayoutDataToday");
+                            GridLayout gridLayoutDataTomorrow = rootView.findViewWithTag("gridLayoutDataTomorrow");
 
-                        showHourlyDataToday();
-                        showDailyDataTomorrow();
-
+                            if (gridLayoutDataToday != null && gridLayoutDataTomorrow != null) {
+                                horizontalScrollView.removeView(gridLayoutDataToday);
+                                linearLayout.removeView(gridLayoutDataTomorrow);
+                            }
+                            showHourlyDataToday();
+                            showDailyDataTomorrow();
+                        }
                         mStringBuilderDateToday.delete(0, mStringBuilderDateToday.length());
                         mStringBuilderDateTomorrow.delete(0, mStringBuilderDateTomorrow.length());
                     }
@@ -435,48 +455,63 @@ public class WeatherFragment extends Fragment {
     }
 
     private void showHourlyDataToday() {
-        mGridLayoutDataToday = new GridLayout(mContext);
-        mGridLayoutDataToday.setLayoutParams(new ViewGroup.LayoutParams
+        GridLayout gridLayoutDataToday = new GridLayout(mContext);
+        gridLayoutDataToday.setTag("gridLayoutDataToday");
+        gridLayoutDataToday.setLayoutParams(new ViewGroup.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        mGridLayoutDataToday.setColumnCount(mMapOfHourlyDataToday.size());
-        mGridLayoutDataToday.setRowCount(2);
+        gridLayoutDataToday.setColumnCount(mListHourlyDataToday.size());
+        gridLayoutDataToday.setRowCount(2);
 
-        mHorizontalScrollView.addView(mGridLayoutDataToday);
+        View rootView = WeatherFragment.this.getView();
+        if (rootView != null) {
+            HorizontalScrollView horizontalScrollView = rootView
+                    .findViewById(R.id.horizontal_scroll_view_for_hourly_data);
+            horizontalScrollView.addView(gridLayoutDataToday);
+        }
 
         int countEntry = 0;
-        for (Map.Entry<String, String> entry : mMapOfHourlyDataToday.entrySet()) {
+        for (HourlyTodayDataStructure hourlyTodayDataStructure : mListHourlyDataToday) {
             TextView textViewTime = new TextView(mContext);
             TextView textViewTemperature = new TextView(mContext);
-
-            textViewTime.setText(entry.getKey());
-            textViewTemperature.setText(entry.getValue());
+            textViewTime.setText(hourlyTodayDataStructure.getHour());
+            textViewTemperature.setText(hourlyTodayDataStructure.getTemperature());
 
             setSettingsTextViewTime(textViewTime);
             setSettingsTextViewTemperature(textViewTemperature);
 
-            mGridLayoutDataToday.addView(textViewTime, new GridLayout.LayoutParams
+            gridLayoutDataToday.addView(textViewTime, new GridLayout.LayoutParams
                     (GridLayout.spec(0, GridLayout.CENTER), GridLayout.spec(countEntry, GridLayout.CENTER)));
-            mGridLayoutDataToday.addView(textViewTemperature, new GridLayout.LayoutParams
+            gridLayoutDataToday.addView(textViewTemperature, new GridLayout.LayoutParams
                     (GridLayout.spec(1, GridLayout.CENTER), GridLayout.spec(countEntry, GridLayout.CENTER)));
             countEntry++;
         }
     }
 
     private void showDailyDataTomorrow() {
+        GridLayout gridLayoutDataTomorrow = new GridLayout(mContext);
+        gridLayoutDataTomorrow.setTag("gridLayoutDataTomorrow");
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams
+                (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER;
+        gridLayoutDataTomorrow.setLayoutParams(layoutParams);
+        gridLayoutDataTomorrow.setColumnCount(mListDailyDataTomorrow.size());
+        gridLayoutDataTomorrow.setRowCount(2);
+        mLinearLayout.addView(gridLayoutDataTomorrow);
+
         int countEntry = 0;
-        for (Map.Entry<String, String> entry : mMapOfDailyDataTomorrow.entrySet()) {
+        for (TomorrowDataStructure tomorrowDataStructure : mListDailyDataTomorrow) {
             TextView textViewTimeDay = new TextView(mContext);
             TextView textViewTemperature = new TextView(mContext);
-
-            textViewTimeDay.setText(entry.getKey());
-            textViewTemperature.setText(entry.getValue());
+            textViewTimeDay.setText(tomorrowDataStructure.getTimesOfDay());
+            textViewTemperature.setText(tomorrowDataStructure.getTemperature());
 
             setSettingsTextViewTime(textViewTimeDay);
             setSettingsTextViewTemperature(textViewTemperature);
 
-            mGridLayoutDataTomorrow.addView(textViewTimeDay, new GridLayout.LayoutParams
+            gridLayoutDataTomorrow.addView(textViewTimeDay, new GridLayout.LayoutParams
                     (GridLayout.spec(0, GridLayout.CENTER), GridLayout.spec(countEntry, GridLayout.CENTER)));
-            mGridLayoutDataTomorrow.addView(textViewTemperature, new GridLayout.LayoutParams
+            gridLayoutDataTomorrow.addView(textViewTemperature, new GridLayout.LayoutParams
                     (GridLayout.spec(1, GridLayout.CENTER), GridLayout.spec(countEntry, GridLayout.CENTER)));
             countEntry++;
         }

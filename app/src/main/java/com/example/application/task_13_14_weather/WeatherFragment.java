@@ -40,10 +40,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -83,10 +81,8 @@ public class WeatherFragment extends Fragment {
     private StringBuilder mStringBuilderDateTomorrow = new StringBuilder();
     private LinearLayout mLinearLayout;
 
-    private List<HourlyTodayDataStructure> mListHourlyDataToday = Collections
-            .synchronizedList(new ArrayList<HourlyTodayDataStructure>());
-    private List<TomorrowDataStructure> mListDailyDataTomorrow = Collections
-            .synchronizedList(new ArrayList<TomorrowDataStructure>());
+    private ArrayList<HourlyTodayDataStructure> mListHourlyDataToday = new ArrayList<HourlyTodayDataStructure>();
+    private ArrayList<TomorrowDataStructure> mListDailyDataTomorrow = new ArrayList<TomorrowDataStructure>();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -310,6 +306,7 @@ public class WeatherFragment extends Fragment {
                 String ForecastsWeatherData = response.body().string();
                 String dateToday = getCurrentDate();
                 String dateTomorrow = getDateTomorrow();
+
                 mListHourlyDataToday.clear();
                 mListDailyDataTomorrow.clear();
                 try {
@@ -329,8 +326,10 @@ public class WeatherFragment extends Fragment {
                                 stringBuilderTemperature.append("+");
                             }
                             stringBuilderTemperature.append(Math.round(temperature)).append("°");
-                            mListHourlyDataToday.add(new HourlyTodayDataStructure(timeOfDay,
-                                    stringBuilderTemperature.toString()));
+                            mHandler.post(() -> {
+                                mListHourlyDataToday.add(new HourlyTodayDataStructure(timeOfDay,
+                                        stringBuilderTemperature.toString()));
+                            });
                         }
                     }
 
@@ -371,14 +370,16 @@ public class WeatherFragment extends Fragment {
                             stringBuilderDay.append(Math.round(temperatureDay)).append("°");
                             stringBuilderEvening.append(Math.round(temperatureEvening)).append("°");
 
-                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Night",
-                                    stringBuilderNight.toString()));
-                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Morning",
-                                    stringBuilderMorning.toString()));
-                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Day",
-                                    stringBuilderDay.toString()));
-                            mListDailyDataTomorrow.add(new TomorrowDataStructure("Evening",
-                                    stringBuilderEvening.toString()));
+                            mHandler.post(() -> {
+                                mListDailyDataTomorrow.add(new TomorrowDataStructure("Night",
+                                        stringBuilderNight.toString()));
+                                mListDailyDataTomorrow.add(new TomorrowDataStructure("Morning",
+                                        stringBuilderMorning.toString()));
+                                mListDailyDataTomorrow.add(new TomorrowDataStructure("Day",
+                                        stringBuilderDay.toString()));
+                                mListDailyDataTomorrow.add(new TomorrowDataStructure("Evening",
+                                        stringBuilderEvening.toString()));
+                            });
                         }
                     }
                 } catch (JSONException e) {

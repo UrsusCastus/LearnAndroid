@@ -9,6 +9,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.application.task_15.ImageViewerTask15Activity;
+
 public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -64,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button buttonWidgetWeather = findViewById(R.id.activity_main_button_widget_weather);
         buttonWidgetWeather.setOnClickListener(view -> runWidgetWeather(view));
+
+        Button buttonTask15 = findViewById(R.id.activity_main_button_task_15);
+        buttonTask15.setOnClickListener(view -> runTask15(view));
     }
 
     public void RunFlashLight(View view) {
@@ -89,5 +94,10 @@ public class MainActivity extends AppCompatActivity {
     public void runWidgetWeather(View view) {
         Intent intentWidgetWeather = new Intent(MainActivity.this, WidgetWeatherActivity.class);
         startActivity(intentWidgetWeather);
+    }
+
+    private void runTask15(View view) {
+        Intent intentTask15 = new Intent(MainActivity.this, ImageViewerTask15Activity.class);
+        startActivity(intentTask15);
     }
 }

@@ -12,7 +12,7 @@
         app:cardBackgroundColor="@android:color/darker_gray"
         >
         <ImageView
-            android:id="@+id/task15_horizontal_image_view"
+            android:id="@+id/web_api_horizontal_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

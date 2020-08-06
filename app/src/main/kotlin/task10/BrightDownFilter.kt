@@ -1,4 +1,4 @@
-package task_10
+package task10
 
 import android.graphics.*
 import android.util.Log

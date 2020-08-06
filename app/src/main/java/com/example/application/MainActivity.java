@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.application.task_15.ImageViewerTask15Activity;
+import com.example.application.task_15.ImageViewerWebApiActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         Button buttonWidgetWeather = findViewById(R.id.activity_main_button_widget_weather);
         buttonWidgetWeather.setOnClickListener(view -> runWidgetWeather(view));
 
-        Button buttonTask15 = findViewById(R.id.activity_main_button_task_15);
-        buttonTask15.setOnClickListener(view -> runTask15(view));
+        Button buttonWebApi = findViewById(R.id.activity_main_button_web_api);
+        buttonWebApi.setOnClickListener(view -> runWebApi(view));
     }
 
     public void RunFlashLight(View view) {
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intentWidgetWeather);
     }
 
-    private void runTask15(View view) {
-        Intent intentTask15 = new Intent(MainActivity.this, ImageViewerTask15Activity.class);
-        startActivity(intentTask15);
+    private void runWebApi(View view) {
+        Intent intentWebApi = new Intent(MainActivity.this, ImageViewerWebApiActivity.class);
+        startActivity(intentWebApi);
     }
 }

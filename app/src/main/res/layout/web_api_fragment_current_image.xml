@@ -8,7 +8,7 @@
     >
 
     <TextView
-        android:id="@+id/task15_text_view"
+        android:id="@+id/web_api_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
@@ -18,7 +18,7 @@
         />
 
     <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/task15_current_image_view"
+        android:id="@+id/web_api_current_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import task_10.BrightDownFilter;
+import task10.BrightDownFilter;
 
 public class CurrentImageActivity extends FragmentActivity {
 
@@ -37,7 +37,6 @@ public class CurrentImageActivity extends FragmentActivity {
     private Bitmap mBitmapChanged;
     private CurrentImageFragment mCurrentImageFragment;
     private ButtonOfFilterFragment mButtonOfFilterFragment;
-    private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
 
     private ExecutorService mExecutorServiceBlur;
@@ -49,18 +48,16 @@ public class CurrentImageActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_image);
 
-        mFragmentManager = getSupportFragmentManager();
-        mButtonOfFilterFragment = (ButtonOfFilterFragment) mFragmentManager.findFragmentById(R.id.fragment_button_filter);
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mButtonOfFilterFragment = (ButtonOfFilterFragment) fragmentManager.findFragmentById(R.id.fragment_button_filter);
         if (savedInstanceState == null) {
             mCurrentImageFragment = new CurrentImageFragment();
-            mFragmentTransaction = mFragmentManager.beginTransaction();
-            mFragmentTransaction
+            fragmentManager
+                    .beginTransaction()
                     .replace(R.id.container_for_fragment, mCurrentImageFragment, CurrentImageFragment.TAG_CURRENT_IMAGE_FRAGMENT)
                     .commit();
         } else {
-            //получаем ссылку по тегу на уже созданный фрагмент
-            mCurrentImageFragment = (CurrentImageFragment) mFragmentManager
+            mCurrentImageFragment = (CurrentImageFragment) fragmentManager
                     .findFragmentByTag(CurrentImageFragment.TAG_CURRENT_IMAGE_FRAGMENT);
         }
     }

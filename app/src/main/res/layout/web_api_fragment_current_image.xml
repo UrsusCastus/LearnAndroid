@@ -4,25 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/web_api_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:textColor="@android:color/black"
         android:textSize="25sp"
-        android:gravity="center_horizontal"
-        tools:text = "Title"
-        />
+        tools:text="Title" />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/web_api_current_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        tools:src="@drawable/image_1_256_pix"
-        />
-
+        tools:src="@drawable/image_1_256_pix" />
 </LinearLayout>

@@ -55,7 +55,7 @@ public class ImageViewerWebApiActivity extends AppCompatActivity implements Item
         setContentView(R.layout.web_api_activity_image_viewer);
         //? метод вызывается дважды
         initializationVerticalGridLayoutManager(columnCount);
-        if (!Utils.Companion.isNetworkConnection(getApplicationContext())) {
+        if (!Utils.Companion.isNetworkConnected(getApplicationContext())) {
             showAlertDialogConnection();
         } else if (savedInstanceState != null) {
             int savedColumnCount = savedInstanceState.getInt(saveKeyColumnCount);
@@ -89,7 +89,7 @@ public class ImageViewerWebApiActivity extends AppCompatActivity implements Item
                                 initialVerticalRecyclerView(mListOfData, mGridLayoutManagerWebApi);
                             },
                             error -> {
-                                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                                 error.printStackTrace();
                             }
                     );
@@ -138,23 +138,13 @@ public class ImageViewerWebApiActivity extends AppCompatActivity implements Item
         }
     }
 
-    private String getScreenOrientation() {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            return "PortraitOrientation";
-        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            return "LandscapeOrientation";
-        } else {
-            return "";
-        }
-    }
-
     private void initializationVerticalGridLayoutManager(int columnCount) {
-        if (getScreenOrientation().equals("PortraitOrientation")) {
-            mGridLayoutManagerWebApi = new GridLayoutManager(this,
-                    columnCount, GridLayoutManager.VERTICAL, false);
-        } else {
+        if (Utils.Companion.isLandScape(getApplicationContext())) {
             mGridLayoutManagerWebApi = new GridLayoutManager(this,
                     columnCount, GridLayoutManager.HORIZONTAL, false);
+        } else {
+            mGridLayoutManagerWebApi = new GridLayoutManager(this,
+                    columnCount, GridLayoutManager.VERTICAL, false);
         }
     }
 
@@ -167,7 +157,7 @@ public class ImageViewerWebApiActivity extends AppCompatActivity implements Item
 
     private void initialHorizontalRecyclerView(ArrayList<ImageData> listData) {
         RecyclerView horizontalRecyclerView = findViewById(R.id.activity_image_viewer_web_api_rv_small_viewer);
-        if (getScreenOrientation().equals("LandscapeOrientation")) {
+        if (Utils.Companion.isLandScape(getApplicationContext())) {
             horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                     LinearLayoutManager.VERTICAL, false));
         } else {

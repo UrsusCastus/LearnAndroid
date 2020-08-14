@@ -3,6 +3,7 @@ package imageviewerwebapi;
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.application.R
 import com.example.application.task_15.CurrentImageActivityWebApi
-import com.squareup.picasso.MemoryPolicy
-import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 
 class LargeViewerWebApiAdapter(
@@ -32,7 +31,7 @@ class LargeViewerWebApiAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LargeViewerWebApiViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.web_api_recycler_view_item_for_large_viewer, parent, false)
-        setLayoutParams(parent, viewType, view)
+        setViewHolderLayoutParameters(parent, viewType, view)
         return LargeViewerWebApiViewHolder(view)
     }
 
@@ -41,10 +40,9 @@ class LargeViewerWebApiAdapter(
     }
 
     override fun onBindViewHolder(holder: LargeViewerWebApiViewHolder, position: Int) {
+        holder.imageClean()
         Picasso.get()
             .load(itemLargeViewerArrayList[position].url)
-            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
             .placeholder(R.drawable.ic_image_not_download)
             .error(R.drawable.ic_error)
             .fit()
@@ -61,6 +59,7 @@ class LargeViewerWebApiAdapter(
 
     //вызывается перед очисткой внутренних данных ViewHolder
     override fun onViewRecycled(holder: LargeViewerWebApiViewHolder) {
+        Log.d("TagLargeViewer", "run onViewRecycled")
         holder.imageClean()
     }
 
@@ -73,7 +72,7 @@ class LargeViewerWebApiAdapter(
         }
     }
 
-    private fun setLayoutParams(parent: ViewGroup, viewType: Int, view: View) {
+    private fun setViewHolderLayoutParameters(parent: ViewGroup, viewType: Int, view: View) {
         val orientation: Int = parent.context.resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_PORTRAIT && viewType == ITEM_TYPE_LIST) {
             view.layoutParams.height = parent.height / NUMBER_OF_ITEM_TO_DISPLAY

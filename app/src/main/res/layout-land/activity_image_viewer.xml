@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="5dp"
-    android:background="#90a4ae"
-    >
+    android:background="#90a4ae">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +24,6 @@
             android:layout_height="match_parent"
             android:layout_weight="0.8"
             android:background="#62757f" />
-
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -34,11 +32,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:clickable="true"
+        android:focusable="true"
         android:scaleType="center"
         android:src="@drawable/ic_add"
-        android:clickable="true"
-        app:backgroundTint="#A80202"
-        android:focusable="true" />
-
+        app:backgroundTint="#A80202" />
 </RelativeLayout>

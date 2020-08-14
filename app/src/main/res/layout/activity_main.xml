@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,9 +13,8 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/buttonFlashLight"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_main_button_2"
@@ -23,9 +23,8 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/buttonImageViewer"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_main_button_map"
@@ -34,9 +33,8 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/buttonMap"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_main_button_timer"
@@ -45,9 +43,8 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/buttonTimer"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_main_button_widget_weather"
@@ -56,20 +53,18 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="Widget weather"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
+        android:textSize="20sp" />
 
     <Button
-    android:id="@+id/activity_main_button_weather_app"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="50dp"
-    android:layout_marginRight="50dp"
-    android:text="@string/weather"
-    android:textSize="20sp"
-    android:textAllCaps="false"
-    />
+        android:id="@+id/activity_main_button_weather_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="@string/weather"
+        android:textAllCaps="false"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/activity_main_button_web_api"
@@ -78,9 +73,6 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:text="@string/task_15"
-        android:textSize="20sp"
         android:textAllCaps="false"
-        />
-
+        android:textSize="20sp" />
 </LinearLayout>
-

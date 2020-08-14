@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,69 +16,9 @@
         android:background="#B3B6DA" />
 
     <fragment
-        android:name="com.example.application.task_8.ButtonOfFilterFragment"
         android:id="@+id/fragment_button_filter"
+        android:name="com.example.application.task_8.ButtonOfFilterFragment"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_button_of_filter"
-        />
-
-    <!--<GridLayout
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:columnCount="1"
-        android:rowCount="5"
-        android:layout_gravity="top|center">
-
-        <Button
-            android:id="@+id/black_and_white_button"
-            android:text="Black and white"
-            android:layout_width="match_parent"
-            android:textSize="15sp"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:textAllCaps="false"
-            />
-
-        <Button
-            android:id="@+id/blur_filter"
-            android:text="Blur"
-            android:layout_width="match_parent"
-            android:textSize="15sp"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:textAllCaps="false"
-            />
-
-        <Button
-            android:id="@+id/brightUp_filter"
-            android:text="Bright Up"
-            android:layout_width="match_parent"
-            android:textSize="15sp"
-            android:layout_column="0"
-            android:layout_row="2"
-            android:textAllCaps="false"
-            />
-
-        <Button
-            android:id="@+id/brightDown_filter"
-            android:text="Bright Down"
-            android:layout_width="match_parent"
-            android:textSize="15sp"
-            android:layout_column="0"
-            android:layout_row="3"
-            android:textAllCaps="false"
-            />
-
-        <Button
-            android:id="@+id/reset"
-            android:text="Reset"
-            android:textSize="15sp"
-            android:layout_width="match_parent"
-            android:layout_column="0"
-            android:layout_row="4"
-            android:textAllCaps="false"
-            />
-    </GridLayout>-->
-
+        tools:layout="@layout/fragment_button_of_filter" />
 </LinearLayout>

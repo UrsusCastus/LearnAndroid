@@ -1,77 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root_linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/activity_main_button_1"
+        android:id="@+id/activity_main_flashlight_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/buttonFlashLight"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_2"
+        android:id="@+id/activity_main_image_viewer_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/buttonImageViewer"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_map"
+        android:id="@+id/activity_main_map_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/buttonMap"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_timer"
+        android:id="@+id/activity_main_timer_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/buttonTimer"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_widget_weather"
+        android:id="@+id/activity_main_widget_weather_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:text="Widget weather"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:text="@string/widget_weather"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_weather_app"
+        android:id="@+id/activity_main_weather_app_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/weather"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/activity_main_button_web_api"
+        android:id="@+id/activity_main_web_api_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
         android:text="@string/task_15"
         android:textAllCaps="false"
         android:textSize="20sp" />

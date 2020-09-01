@@ -4,17 +4,14 @@
     <string name="buttonImageViewer">Image viewer</string>
     <string name="buttonMap">Map</string>
     <string name="buttonTimer">Timer</string>
+    <string name="widget_weather">Widget weather</string>
+    <string name="weather">Weather</string>
     <string name="task_15">WebApi</string>
 
-    <string name="flash">Flash</string>
-    <string name="maximum_screen_brightness">Maximum screen brightness</string>
-    <string name="flashlight">Flashlight</string>
     <string name="title_activity_map">Map</string>
     <string name="map_key" translatable="false">"AIzaSyDwJnDS3tmvwhLIrHJa5TsDs7YgKX1mjLI"</string>
 
     <string name="secondsTimerEditText">Seconds</string>
-
-    <string name="weather">Weather</string>
 
     <!--weather fragment-->\
     <string name="openWeatherMapKey" translatable="false">6c8582d03d8c5dea07f358f4683f208c</string>

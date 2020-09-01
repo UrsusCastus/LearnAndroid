@@ -33,7 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FlashLightActivity" />
         <activity android:name=".ImageViewerActivity" />
         <activity android:name=".CurrentImageActivity" />
         <activity

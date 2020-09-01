@@ -4,11 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.appflashlight.FlashLightActivity;
 import com.example.application.task_15.ImageViewerWebApiActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,83 +20,59 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        Button buttonFlashLight = (Button) findViewById(R.id.activity_main_button_1);
-        View.OnClickListener buttonClickListener_1 = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RunFlashLight(view);
-            }
-        };
-        buttonFlashLight.setOnClickListener(buttonClickListener_1);
+        Button flashLightButton = findViewById(R.id.activity_main_flashlight_button);
+        flashLightButton.setOnClickListener(view -> runFlashLight());
 
+        Button imageViewerButton = findViewById(R.id.activity_main_image_viewer_button);
+        imageViewerButton.setOnClickListener(view -> runImageViewer());
 
-        Button buttonImageViewer = (Button) findViewById(R.id.activity_main_button_2);
-        View.OnClickListener buttonClickListener_2 = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RunImageViewer(view);
-            }
-        };
-        buttonImageViewer.setOnClickListener(buttonClickListener_2);
+        Button mapButton = findViewById(R.id.activity_main_map_button);
+        mapButton.setOnClickListener(view -> runMap());
 
+        Button timerButton = findViewById(R.id.activity_main_timer_button);
+        timerButton.setOnClickListener(view -> runTimer());
 
-        Button buttonMap = (Button) findViewById(R.id.activity_main_button_map);
-        View.OnClickListener buttonClickListenerMap = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                runMap(view);
-            }
-        };
-        buttonMap.setOnClickListener(buttonClickListenerMap);
+        Button weatherAppButton = findViewById(R.id.activity_main_weather_app_button);
+        weatherAppButton.setOnClickListener(view -> runWeather());
 
-        Button buttonTimer = (Button) findViewById(R.id.activity_main_button_timer);
-        View.OnClickListener buttonClickListenerTimer = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                runTimer(view);
-            }
-        };
-        buttonTimer.setOnClickListener(buttonClickListenerTimer);
+        Button widgetWeatherButton = findViewById(R.id.activity_main_widget_weather_button);
+        widgetWeatherButton.setOnClickListener(view -> runWidgetWeather());
 
-        Button buttonWeather = findViewById(R.id.activity_main_button_weather_app);
-        buttonWeather.setOnClickListener(view -> {
-            Intent intentWeather = new Intent(MainActivity.this, WeatherActivity.class);
-            startActivity(intentWeather);
-        });
-
-        Button buttonWidgetWeather = findViewById(R.id.activity_main_button_widget_weather);
-        buttonWidgetWeather.setOnClickListener(view -> runWidgetWeather(view));
-
-        Button buttonWebApi = findViewById(R.id.activity_main_button_web_api);
-        buttonWebApi.setOnClickListener(view -> runWebApi(view));
+        Button webApiButton = findViewById(R.id.activity_main_web_api_button);
+        webApiButton.setOnClickListener(view -> runWebApi());
     }
 
-    public void RunFlashLight(View view) {
+    private void runFlashLight() {
         Intent intentFlashLight = new Intent(MainActivity.this, FlashLightActivity.class);
         startActivity(intentFlashLight);
     }
 
-    public void RunImageViewer(View view) {
+    private void runImageViewer() {
         Intent intentImageViewer = new Intent(MainActivity.this, ImageViewerActivity.class);
         startActivity(intentImageViewer);
     }
 
-    public void runMap(View view) {
+    private void runMap() {
         Intent intentMap = new Intent(MainActivity.this, MapActivity.class);
         startActivity(intentMap);
     }
 
-    public void runTimer(View view) {
+    private void runTimer() {
         Intent intentTimer = new Intent(MainActivity.this, TimerActivity.class);
         startActivity(intentTimer);
     }
 
-    public void runWidgetWeather(View view) {
+    private void runWeather() {
+        Intent intentWeather = new Intent(MainActivity.this, WeatherActivity.class);
+        startActivity(intentWeather);
+    }
+
+    private void runWidgetWeather() {
         Intent intentWidgetWeather = new Intent(MainActivity.this, WidgetWeatherActivity.class);
         startActivity(intentWidgetWeather);
     }
 
-    private void runWebApi(View view) {
+    private void runWebApi() {
         Intent intentWebApi = new Intent(MainActivity.this, ImageViewerWebApiActivity.class);
         startActivity(intentWebApi);
     }

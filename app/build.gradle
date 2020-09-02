@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion build_versions.compile_sdk
     buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "com.example.application"
-        minSdkVersion 23
-        targetSdkVersion 29
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
@@ -40,25 +40,16 @@ android {
 dependencies {
     //для добавления jar-файлов в качестве локальной библиотеки
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    //added for fab
-    implementation 'com.google.android.material:material:1.2.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    //library for zoom image
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    //RxAndroid
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    //RxJava
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.3'
-    //Coroutines Kotlin
-    def coroutinesVersion = '1.3.6'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
-    //OkHttp
-    implementation"com.squareup.okhttp3:okhttp:4.7.2"
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
-
     implementation project(path: ':appflashlight')
+    implementation deps.recyclerview
+    implementation deps.cardview
+    implementation deps.material
+    implementation deps.play_services_maps
+    implementation deps.photo_view
+    implementation deps.rx_android
+    implementation deps.rx_java3
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
+    implementation deps.okhttp3
+    implementation deps.picasso
 }

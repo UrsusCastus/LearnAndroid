@@ -7,14 +7,12 @@ import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.Arrays;
-import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -23,6 +21,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class FlashLightActivity extends AppCompatActivity {
 
     private boolean mFlashLightOn;
+    private Handler mHandler;
+    private CameraManager mCameraManager;
+    private String mCameraId;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -30,6 +31,16 @@ public class FlashLightActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_flash_light);
+
+        mHandler = new Handler();
+        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        if (mCameraManager != null) {
+            try {
+                mCameraId = mCameraManager.getCameraIdList()[0];
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
         final boolean hasCameraFlash = getApplicationContext().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
@@ -39,10 +50,13 @@ public class FlashLightActivity extends AppCompatActivity {
             if (flashCheckBox.isChecked()) {
                 if (hasCameraFlash) {
                     if (!mFlashLightOn) {
-                        blinkFlash();
+                        Observable.fromRunnable(() -> blinkFlash())
+                                .subscribeOn(Schedulers.single())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.no_flash_available_message, Toast.LENGTH_SHORT).show();
+                    flashCheckBox.setEnabled(false);
                 }
             } else {
                 flashLightOff();
@@ -67,7 +81,7 @@ public class FlashLightActivity extends AppCompatActivity {
                         mFlashLightOn = true;
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.no_flash_available_message, Toast.LENGTH_SHORT).show();
+                    flashLightCheckBox.setEnabled(false);
                 }
             } else {
                 flashLightOff();
@@ -77,50 +91,30 @@ public class FlashLightActivity extends AppCompatActivity {
     }
 
     private void flashLightOn() {
-        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        if (cameraManager != null) {
-            try {
-                String cameraId = cameraManager.getCameraIdList()[0];
-                cameraManager.setTorchMode(cameraId, true);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+        try {
+            mCameraManager.setTorchMode(mCameraId, true);
+        } catch (CameraAccessException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
     private void flashLightOff() {
-        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        if (cameraManager != null) {
-            try {
-                String cameraId = cameraManager.getCameraIdList()[0];
-                cameraManager.setTorchMode(cameraId, false);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+        try {
+            mCameraManager.setTorchMode(mCameraId, false);
+        } catch (CameraAccessException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
     private void blinkFlash() {
-        final List<Integer> blinkFlash =
-                Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1);
-        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-
-        Observable.fromIterable(blinkFlash)
-                .doOnNext(number -> {
-                    String cameraId;
-                    if (cameraManager != null) {
-                        cameraId = cameraManager.getCameraIdList()[0];
-                        if (number == 0) {
-                            cameraManager.setTorchMode(cameraId, true);
-                        } else {
-                            cameraManager.setTorchMode(cameraId, false);
-                        }
-                    }
-                    Thread.sleep(50);
-                })
-                .subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+        Runnable runnableOnFlash = () -> flashLightOn();
+        Runnable runnableOffFlash = () -> flashLightOff();
+        mHandler.post(runnableOnFlash);
+        mHandler.postDelayed(runnableOffFlash, 750);
+        mHandler.postDelayed(runnableOnFlash, 1050);
+        mHandler.postDelayed(runnableOffFlash, 1200);
     }
 
     private void setBrightnessMax() {

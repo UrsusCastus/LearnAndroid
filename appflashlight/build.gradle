@@ -26,8 +26,5 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation deps.app_compat
-    implementation deps.rx_android
-    implementation deps.rx_java3
 }

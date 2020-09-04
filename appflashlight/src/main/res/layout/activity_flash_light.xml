@@ -9,12 +9,12 @@
     android:orientation="vertical">
 
     <CheckBox
-        android:id="@+id/activity_flash_light_flash"
+        android:id="@+id/activity_flash_light_blink_flash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:layoutDirection="rtl"
-        android:text="@string/flash"
+        android:text="@string/blink_flash"
         android:textSize="20sp" />
 
     <CheckBox
@@ -34,5 +34,14 @@
         android:layoutDirection="rtl"
         android:text="@string/flashlight"
         android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/activity_flash_light_flash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/flash"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:layout_gravity="center" />
 
 </LinearLayout>

@@ -38,9 +38,7 @@ android {
 }
 
 dependencies {
-    //для добавления jar-файлов в качестве локальной библиотеки
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':appflashlight')
+    implementation project(':appflashlight')
     implementation deps.recyclerview
     implementation deps.cardview
     implementation deps.material
@@ -48,8 +46,8 @@ dependencies {
     implementation deps.photo_view
     implementation deps.rx_android
     implementation deps.rx_java3
-    implementation deps.coroutines.core
-    implementation deps.coroutines.android
+    implementation deps.coroutines_core
+    implementation deps.coroutines_android
     implementation deps.okhttp3
     implementation deps.picasso
 }

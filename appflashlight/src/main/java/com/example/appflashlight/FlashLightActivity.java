@@ -9,19 +9,16 @@ import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
 public class FlashLightActivity extends AppCompatActivity {
 
-    private boolean mFlashLightOn;
     private Handler mHandler;
+    private Runnable mBlinkFlashRunnable;
     private CameraManager mCameraManager;
     private String mCameraId;
 
@@ -32,7 +29,8 @@ public class FlashLightActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_flash_light);
 
-        mHandler = new Handler();
+        final boolean hasCameraFlash = getApplicationContext().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
         mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         if (mCameraManager != null) {
             try {
@@ -41,53 +39,52 @@ public class FlashLightActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-        final boolean hasCameraFlash = getApplicationContext().getPackageManager()
-                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-        final CheckBox flashCheckBox = findViewById(R.id.activity_flash_light_flash);
-
-        flashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (flashCheckBox.isChecked()) {
-                if (hasCameraFlash) {
-                    if (!mFlashLightOn) {
-                        Observable.fromRunnable(() -> blinkFlash())
-                                .subscribeOn(Schedulers.single())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe();
-                    }
-                } else {
-                    flashCheckBox.setEnabled(false);
-                }
-            } else {
-                flashLightOff();
-            }
-        });
-
+        mHandler = new Handler();
+        final CheckBox blinkFlashCheckBox = findViewById(R.id.activity_flash_light_blink_flash);
         final CheckBox maxBrightnessCheckBox = findViewById(R.id.activity_flash_light_max_brightness);
-        maxBrightnessCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (maxBrightnessCheckBox.isChecked()) {
-                setBrightnessMax();
-            } else {
-                setBrightnessCurrent();
-            }
-        });
-
         final CheckBox flashLightCheckBox = findViewById(R.id.activity_flash_light_flashlight);
-        flashLightCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (flashLightCheckBox.isChecked()) {
-                if (hasCameraFlash) {
-                    if (!mFlashLightOn) {
-                        flashLightOn();
-                        mFlashLightOn = true;
-                    }
-                } else {
+        Button flashButton = findViewById(R.id.activity_flash_light_flash);
+
+        if (hasCameraFlash && mCameraManager != null && mCameraId != null) {
+            blinkFlashCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (blinkFlashCheckBox.isChecked()) {
                     flashLightCheckBox.setEnabled(false);
+                    flashButton.setEnabled(false);
+                    blinkFlash();
+                } else {
+                    mHandler.removeCallbacks(mBlinkFlashRunnable);
+                    flashLightCheckBox.setEnabled(true);
+                    flashButton.setEnabled(true);
                 }
-            } else {
-                flashLightOff();
-                mFlashLightOn = false;
-            }
-        });
+            });
+
+            maxBrightnessCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (maxBrightnessCheckBox.isChecked()) {
+                    setBrightnessMax();
+                } else {
+                    setBrightnessCurrent();
+                }
+            });
+
+            flashLightCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (flashLightCheckBox.isChecked()) {
+                    blinkFlashCheckBox.setEnabled(false);
+                    flashButton.setEnabled(false);
+                    flashLightOn();
+                } else {
+                    blinkFlashCheckBox.setEnabled(true);
+                    flashButton.setEnabled(true);
+                    flashLightOff();
+                }
+            });
+
+            flashButton.setOnClickListener(view -> flash());
+
+        } else {
+            blinkFlashCheckBox.setEnabled(false);
+            flashLightCheckBox.setEnabled(false);
+            flashButton.setEnabled(false);
+        }
     }
 
     private void flashLightOn() {
@@ -109,12 +106,22 @@ public class FlashLightActivity extends AppCompatActivity {
     }
 
     private void blinkFlash() {
-        Runnable runnableOnFlash = () -> flashLightOn();
-        Runnable runnableOffFlash = () -> flashLightOff();
-        mHandler.post(runnableOnFlash);
-        mHandler.postDelayed(runnableOffFlash, 750);
-        mHandler.postDelayed(runnableOnFlash, 1050);
-        mHandler.postDelayed(runnableOffFlash, 1200);
+        mBlinkFlashRunnable = () -> {
+            flashLightOn();
+            mHandler.postDelayed(() -> flashLightOff(), 500);
+            mHandler.postDelayed(mBlinkFlashRunnable, 1000);
+        };
+        mBlinkFlashRunnable.run();
+    }
+
+    private void flash() {
+        Runnable runnable = () -> {
+            mHandler.post(() -> flashLightOn());
+            mHandler.postDelayed(() -> flashLightOff(), 750);
+            mHandler.postDelayed(() -> flashLightOn(), 1050);
+            mHandler.postDelayed(() -> flashLightOff(), 1200);
+        };
+        runnable.run();
     }
 
     private void setBrightnessMax() {

@@ -1,2 +1,3 @@
+include ':appflashlight'
 rootProject.name='Application'
-include ':app'
+include ':app', ':appflashlight'

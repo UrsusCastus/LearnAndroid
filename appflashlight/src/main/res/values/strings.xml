@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="flash">Flash</string>
+    <string name="blink_flash">Blink flash</string>
+    <string name="maximum_screen_brightness">Maximum screen brightness</string>
+    <string name="flashlight">Flash light</string>
+</resources>

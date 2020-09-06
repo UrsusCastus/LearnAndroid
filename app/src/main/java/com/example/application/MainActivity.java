@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appflashlight.FlashLightActivity;
 import com.example.application.task_15.ImageViewerWebApiActivity;
+import com.example.applistofimages.ListOfImagesActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupButton(R.id.activity_main_flashlight_button, FlashLightActivity.class);
-        setupButton(R.id.activity_main_image_viewer_button, ImageViewerActivity.class);
+        setupButton(R.id.activity_main_image_viewer_button, ListOfImagesActivity.class);
         setupButton(R.id.activity_main_map_button, MapActivity.class);
         setupButton(R.id.activity_main_timer_button, TimerActivity.class);
         setupButton(R.id.activity_main_weather_app_button, WeatherActivity.class);

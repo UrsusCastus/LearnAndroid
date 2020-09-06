@@ -1,4 +1,4 @@
-package com.example.application;
+package com.example.applistofimages;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,8 +18,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.application.task_8.ButtonOfFilterFragment;
-import com.example.application.task_8.CurrentImageFragment;
+import com.example.applistofimages.task_8.ButtonOfFilterFragment;
+import com.example.applistofimages.task_8.CurrentImageFragment;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

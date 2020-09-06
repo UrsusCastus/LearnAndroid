@@ -1,12 +1,4 @@
-package com.example.application;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.applistofimages;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,17 +11,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.application.task_2.AdapterForSmallViewer;
-import com.example.application.task_2.AdapterForLargeViewer;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.applistofimages.task_2.AdapterForLargeViewer;
+import com.example.applistofimages.task_2.AdapterForSmallViewer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_ONE;
-import static com.example.application.task_2.AdapterForLargeViewer.SPAN_COUNT_THREE;
-
-public class ImageViewerActivity extends AppCompatActivity {
+public class ListOfImagesActivity extends AppCompatActivity {
     private final String COUNT_COLUMNS = "saveCountColumns";
 
     ArrayList<Integer> mItemsSmallViewer = new ArrayList<Integer>(38);
@@ -138,7 +135,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
-        if (mGridLayoutManager.getSpanCount() == SPAN_COUNT_ONE) {
+        if (mGridLayoutManager.getSpanCount() == AdapterForLargeViewer.SPAN_COUNT_ONE) {
             menu.findItem(R.id.menu_switch_layout).setIcon(R.drawable.ic_icon_list);
         } else {
             menu.findItem(R.id.menu_switch_layout).setIcon(R.drawable.ic_icon_grid);
@@ -149,11 +146,11 @@ public class ImageViewerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_switch_layout) {
-            if (mGridLayoutManager.getSpanCount() == SPAN_COUNT_ONE) {
-                mGridLayoutManager.setSpanCount(SPAN_COUNT_THREE);
+            if (mGridLayoutManager.getSpanCount() == AdapterForLargeViewer.SPAN_COUNT_ONE) {
+                mGridLayoutManager.setSpanCount(AdapterForLargeViewer.SPAN_COUNT_THREE);
                 item.setIcon(R.drawable.ic_icon_grid);
             } else {
-                mGridLayoutManager.setSpanCount(SPAN_COUNT_ONE);
+                mGridLayoutManager.setSpanCount(AdapterForLargeViewer.SPAN_COUNT_ONE);
                 item.setIcon(R.drawable.ic_icon_list);
             }
             return true;

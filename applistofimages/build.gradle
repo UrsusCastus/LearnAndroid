@@ -1,19 +1,18 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion build_versions.compile_sdk
-    buildToolsVersion "29.0.2"
 
     defaultConfig {
-        applicationId "com.example.application"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -22,33 +21,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
-        targetCompatibility = 1.8
-        sourceCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-
     sourceSets {
         main.java.srcDirs += 'src\\main\\kotlin\\'
-    }
-
-    androidExtensions {
-        experimental = true
     }
 }
 
 dependencies {
-    implementation project(':appflashlight')
-    implementation project(':applistofimages')
-    implementation deps.recyclerview
-    implementation deps.cardview
+    implementation deps.app_compat
     implementation deps.material
-    implementation deps.play_services_maps
-    implementation deps.photo_view
     implementation deps.rx_android
     implementation deps.rx_java3
     implementation deps.coroutines_core
     implementation deps.coroutines_android
-    implementation deps.okhttp3
-    implementation deps.picasso
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }

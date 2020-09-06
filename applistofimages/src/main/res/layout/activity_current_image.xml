@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CurrentImageActivity">
+    tools:context="com.example.applistofimages.CurrentImageActivity">
 
     <FrameLayout
         android:id="@+id/container_for_fragment"
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/fragment_button_filter"
-        android:name="com.example.application.task_8.ButtonOfFilterFragment"
+        android:name="com.example.applistofimages.task_8.ButtonOfFilterFragment"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center"

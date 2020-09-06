@@ -1,4 +1,4 @@
-package com.example.application.task_8;
+package com.example.applistofimages.task_8;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.application.R;
+import com.example.applistofimages.R;
 
 import java.io.IOException;
 import java.io.InputStream;

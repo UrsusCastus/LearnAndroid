@@ -30,8 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ImageViewerActivity" />
-        <activity android:name=".CurrentImageActivity" />
         <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map" />

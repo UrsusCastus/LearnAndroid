@@ -1,4 +1,4 @@
-package com.example.application.task_8;
+package com.example.applistofimages.task_8;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.application.R;
+import com.example.applistofimages.R;
 
 public class ButtonOfFilterFragment extends Fragment {
 

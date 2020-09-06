@@ -1,4 +1,4 @@
-package com.example.application.task_2;
+package com.example.applistofimages.task_2;
 
 public class ImageViewItemDrawable {
 

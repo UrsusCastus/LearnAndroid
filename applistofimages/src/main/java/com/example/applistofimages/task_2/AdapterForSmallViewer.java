@@ -1,4 +1,4 @@
-package com.example.application.task_2;
+package com.example.applistofimages.task_2;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.application.ImageViewerActivity;
-import com.example.application.R;
+import com.example.applistofimages.ListOfImagesActivity;
+import com.example.applistofimages.R;
 
 import java.util.ArrayList;
 
@@ -46,7 +46,7 @@ public class AdapterForSmallViewer extends RecyclerView.Adapter<AdapterForSmallV
         holder.itemImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AdapterForLargeViewer adapterForLargeViewer = ImageViewerActivity.getAdapterForLargeViewer();
+                AdapterForLargeViewer adapterForLargeViewer = ListOfImagesActivity.getAdapterForLargeViewer();
                 adapterForLargeViewer.mGridLayoutManagerLargeViewer.scrollToPosition(position);
             }
         });

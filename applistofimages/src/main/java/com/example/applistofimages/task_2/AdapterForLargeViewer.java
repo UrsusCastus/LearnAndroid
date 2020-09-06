@@ -1,4 +1,4 @@
-package com.example.application.task_2;
+package com.example.applistofimages.task_2;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.application.CurrentImageActivity;
-import com.example.application.R;
+import com.example.applistofimages.CurrentImageActivity;
+import com.example.applistofimages.R;
 
 import java.io.File;
 import java.io.IOException;

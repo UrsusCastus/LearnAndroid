@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.applistofimages">
+
+    <application>
+        <activity android:name="com.example.applistofimages.ListOfImagesActivity" />
+        <activity android:name="com.example.applistofimages.CurrentImageActivity" />
+    </application>
+</manifest>
